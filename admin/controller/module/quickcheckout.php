@@ -7,7 +7,7 @@ class ControllerModuleQuickcheckout extends Controller {
 	private $error = array(); 
 	private $texts = array('title', 'tooltip', 'description', 'text');
 	public $route  = 'module/quickcheckout';
-	public $mbooth = 'mbooth_quickcheckout.xml';
+	public $mbooth = 'mbooth_quickcheckout_lite.xml';
 	public $module = 'quickcheckout';
 
 	public function index() {   
@@ -270,6 +270,8 @@ class ControllerModuleQuickcheckout extends Controller {
 		$this->data['general_custom_style_tooltip'] = $this->language->get('general_custom_style_tooltip');
 		$this->data['general_trigger_tooltip'] = $this->language->get('general_trigger_tooltip');
 		$this->data['general_address_style_tooltip'] = $this->language->get('general_address_style_tooltip');
+		
+		$this->data['text_need_full_version'] = $this->language->get('text_need_full_version');
 		
 		$this->data['button_save'] = $this->language->get('button_save');
 		$this->data['button_save_and_stay'] = $this->language->get('button_save_and_stay');
@@ -602,7 +604,7 @@ class ControllerModuleQuickcheckout extends Controller {
 		if (isset($this->request->get['mbooth'])) { 
 			$mbooth = $this->request->get['mbooth']; 
 		} else { 
-			$mbooth = 'mbooth_quickcheckout.xml'; 
+			$mbooth = 'mbooth_quickcheckout_lite.xml'; 
 		}
 
 		$customer_url = HTTP_SERVER;

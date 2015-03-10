@@ -1,7 +1,7 @@
 <?php
 // Heading
-$_['heading_title']       						= '<img src="view/image/quickcheckout/aqc_admin_icon.png">  <span style="color:#449DD0; font-weight:bold">Ajax Quick Checkout</span><span style="font-size:12px; color:#999"> by <a href="http://www.opencart.com/index.php?route=extension/extension&filter_username=Dreamvention" style="font-size:1em; color:#999" target="_blank">Dreamvention</a></span>';
-$_['heading_title_main']       					= 'Ajax Quick Checkout';
+$_['heading_title']       						= '<img src="view/image/quickcheckout/aqc_admin_icon.png">  <span style="color:#449DD0; font-weight:bold">Ajax Quick Checkout Lite</span><span style="font-size:12px; color:#999"> by <a href="http://www.opencart.com/index.php?route=extension/extension&filter_username=Dreamvention" style="font-size:1em; color:#999" target="_blank">Dreamvention</a></span>';
+$_['heading_title_main']       					= 'Ajax Quick Checkout Lite';
 
 // Text
 $_['text_module']        					 	= 'Modules';
@@ -236,6 +236,7 @@ $_['text_error_update'] 						= 'Sorry! Something went wrong. If this repeats, c
 $_['text_error_failed'] 						= 'Oops! We could not connect to the server. Please try again later.';
 $_['error_shopunity_required'] 					= 'Don\'t worry, to make your module look great, please install Shopunity Admin them. You can download it from <a href="http://www.opencart.com/index.php?route=extension/extension/info&extension_id=14928">here</a>';
 
+$_['text_need_full_version']        		    = '<h4>To use this function full version required</h4><p>You can purchase the full version on <a href="http://www.opencart.com/index.php?route=extension/extension/info&amp;extension_id=9132" target="_blank">opencart</a> or from <a href="https://gumroad.com/l/checkout" target="_blank">gumroad</a>. It haa much more functions that will allow you to set up the perfect checkout.</p>';
 
 
 
