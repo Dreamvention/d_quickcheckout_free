@@ -596,7 +596,7 @@ class ControllerModuleQuickcheckout extends Controller {
 		$json = array();
 		$this->load->language('module/quickcheckout');
 		$this->mboot_script_dir = substr_replace(DIR_SYSTEM, '/admin/mbooth/xml/', -8);
-		$str = file_get_contents($this->mboot_script_dir . 'mbooth_quickcheckout.xml');
+		$str = file_get_contents($this->mboot_script_dir . 'mbooth_quickcheckout_lite.xml');
 		$xml = new SimpleXMLElement($str);
 	
 		$current_version = $xml->version ;
