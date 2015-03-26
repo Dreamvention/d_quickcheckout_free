@@ -77,6 +77,7 @@ echo $settings['general']['checkout_style'];
   </div>
 </div>
 <script><!--
+
 if (!window.console) window.console = {};
 if (!window.console.log) window.console.log = function (){ } ;
 $('#quickcheckout .preloader').spin('huge');
@@ -120,6 +121,7 @@ function refreshCheckout(Step, func){
 	updateSettings(function(){
 		if(Step == 0){
 			if (typeof func == "function") func();
+				
 		}else{
 			if(Step <= 1){ 
 			//refreshAllSteps()
@@ -278,9 +280,10 @@ $(document).on('click', '#button_login_popup', function() {
 	$.ajax({
 		url: 'index.php?route=module/quickcheckout/login_validate',
 		type: 'post',
-		data: $('#quickcheckout #step_1 #option_login_popup input'),
+		data: $('#option_login_popup input'),
 		dataType: 'json',
 		beforeSend: function() {
+			
 			$('#button_login_popup').attr('disabled', true);
 			
 		},	
@@ -524,9 +527,12 @@ function confirmOrderQC(func){
 *	Actions
 */
 $(document).on('focus', 'input[name=\'payment_address[password]\']', function() {
-	$(this).on('change', function() {
-		$('input[name=\'payment_address[confirm]\']').next('.error').remove()
-	});
+	var input_field = $(this);
+	setTimeout(function () {
+		input_field.on('change', function() {
+			$('input[name=\'payment_address[confirm]\']').next('.error').remove()
+		});
+	}, 100)
 });
 
 $(document).on('click', '#quickcheckout input[name="payment_address[shipping]"]', function(event) {			
@@ -544,15 +550,21 @@ $(document).on('click', '#quickcheckout input[name="payment_address[shipping]"]'
 /*
 *	Change values of text or select(dropdown)
 */
-$(document).on('focus', '#quickcheckout input[type=text], #quickcheckout input[type=password], #quickcheckout select, #quickcheckout textarea', function(event) {
-	$(this).on('change', function(e) {
-		var dataRefresh = $(this).attr('data-refresh');
 
-		validateField( $(this).attr('id') )
-		
-		if(dataRefresh){refreshCheckout(dataRefresh)}
-		e.stopImmediatePropagation()
-	});
+$(document).on('focus', '#quickcheckout input[type=text], #quickcheckout input[type=password], #quickcheckout select, #quickcheckout textarea', function(event) {
+	var input_field = $(this);
+	 setTimeout(function () {
+        input_field.on('change', function(e) {
+			var dataRefresh = $(this).attr('data-refresh');
+
+			validateField( $(this).attr('id') )
+			
+			if(dataRefresh){refreshCheckout(dataRefresh)}
+				
+			e.stopImmediatePropagation()
+		});
+    }, 100)
+
 	event.stopImmediatePropagation()
 });
 

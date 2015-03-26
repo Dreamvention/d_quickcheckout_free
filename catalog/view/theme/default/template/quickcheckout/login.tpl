@@ -38,11 +38,29 @@
     <?php }  ?>
   </div>
 
-
+  <div id="option_login_popup_wrap" class="box-popup-wrap">
+    <div id="option_login_popup" class="box-popup" style="display:<?php if(!$data['option']['login']['display']){ echo 'none'; } ?> ;">
+      <div class="box-heading"><?php echo $text_returning_customer; ?></div>
+      <div class="box-content">
+        <div class="block-row email">
+          <label for="login_email"><?php echo $entry_email; ?></label>
+          <input type="text" name="email" value="" id="login_email" placeholder="<?php echo $entry_email; ?>" /></div>
+          <div class="block-row password">
+            <label for="login_password"><?php echo $entry_password; ?></label>
+            <input type="password" name="password" value="" id="login_password" placeholder="<?php echo $entry_password; ?>"/>
+          </div>
+          <div class="block-row button-login">
+            <input type="button" value="<?php echo $button_login; ?>" id="button_login_popup" class="button btn btn-primary" />
+            <a id="remeber_password" href="<?php echo $forgotten; ?>"><?php echo $text_forgotten; ?></a> 
+          </div>
+          <div class="clear" ></div>
+        </div>
+        <div class="close">x</div>
+      </div>
+    </div>
 <script><!--
 $(function(){
-  
-    $("body").append('<div id="option_login_popup_wrap" class="box-popup-wrap"><div id="option_login_popup" class="box-popup" style="display:<?php if(!$data['option']['login']['display']){ echo 'none'; } ?> ;"><div class="box-heading"><?php echo $text_returning_customer; ?></div><div class="box-content"><div class="block-row email"><label for="login_email"><?php echo $entry_email; ?></label><input type="text" name="email" value="" id="login_email" placeholder="<?php echo $entry_email; ?>" /></div><div class="block-row password"><label for="login_password"><?php echo $entry_password; ?></label><input type="password" name="password" value="" id="login_password" placeholder="<?php echo $entry_password; ?>"/></div><div class="block-row button-login"><input type="button" value="<?php echo $button_login; ?>" id="button_login_popup" class="button btn btn-primary" /><a id="remeber_password" href="<?php echo $forgotten; ?>"><?php echo $text_forgotten; ?></a> </div><div class="clear" ></div></div><div class="close">x</div></div></div> ');
+  $('#option_login_popup_wrap').appendTo(document.body);
  
   if($.isFunction($.fn.uniform)){
     $(" .styled, input:radio.styled").uniform().removeClass('styled');

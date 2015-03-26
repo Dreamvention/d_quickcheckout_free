@@ -2050,7 +2050,6 @@ class ControllerModuleQuickcheckout extends Controller {
 		
 		$json = array();
 		$this->settings = $this->get_settings();
-
 		//check password
 		if (!$this->customer->login($this->request->post['email'], $this->request->post['password'])) {
 			$json['error']['warning'] = $this->language->get('error_login');
