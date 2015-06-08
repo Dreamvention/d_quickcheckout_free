@@ -29,11 +29,14 @@
         #quickcheckout #dsl_<?php echo $provider['id']; ?>_button:active{
           background: <?php echo $provider['background_color_active']; ?>;
         }
+        #quickcheckout .qc-dsl-icon{
+          color:#fff;
+        }
       <?php } ?>
       </style> 
       <div id="d_social_login">
         <span class="qc-dsl-label qc-dsl-label-<?php echo $dsl_size; ?>"><?php echo $button_sign_in; ?></span>
-        <?php foreach($providers as $provider){ ?><?php if ($provider['enabled']) { ?><a id="dsl_<?php echo $provider['id']; ?>_button" class="qc-dsl-button qc-dsl-button-<?php echo $dsl_size; ?>" href="index.php?route=module/d_social_login/provider_login&provider=<?php echo $provider['id']; ?>"><span class="l-side"><span class="dsl-icon-<?php echo $provider['id']; ?> qc-dsl-icon"></span></span><span class="r-side"><?php echo $provider['heading']; ?></span></a><?php }  ?><?php } ?>
+        <?php foreach($providers as $provider){ ?><?php if ($provider['enabled']) { ?><a id="dsl_<?php echo $provider['id']; ?>_button" class="qc-dsl-button qc-dsl-button-<?php echo $dsl_size; ?>" href="index.php?route=module/d_social_login/login&provider=<?php echo $provider['id']; ?>"><span class="l-side"><span class="<?php echo $provider['icon']; ?> qc-dsl-icon"></span></span><span class="r-side"><?php echo $provider['heading']; ?></span></a><?php }  ?><?php } ?>
       </div>
     <?php }  ?>
   </div>
@@ -113,11 +116,14 @@ $(function(){
           #quickcheckout #dsl_<?php echo $provider['id']; ?>_button:active{
             background: <?php echo $provider['background_color_active']; ?>;
           }
+          #quickcheckout .qc-dsl-icon{
+          color:#fff;
+        }
         <?php } ?>
         </style>
         <div id="d_social_login">
           <span class="qc-dsl-label qc-dsl-label-<?php echo $dsl_size; ?>"><?php echo $button_sign_in; ?></span>
-          <?php foreach($providers as $provider){ ?><?php if ($provider['enabled']) { ?><a id="dsl_<?php echo $provider['id']; ?>_button" class="qc-dsl-button qc-dsl-button-<?php echo $dsl_size; ?>" href="index.php?route=module/d_social_login/provider_login&provider=<?php echo $provider['id']; ?>"><span class="l-side"><span class="dsl-icon-<?php echo $provider['id']; ?> qc-dsl-icon"></span></span><span class="r-side"><?php echo $provider['heading']; ?></span></a><?php }  ?><?php } ?>
+          <?php foreach($providers as $provider){ ?><?php if ($provider['enabled']) { ?><a id="dsl_<?php echo $provider['id']; ?>_button" class="qc-dsl-button qc-dsl-button-<?php echo $dsl_size; ?>" href="index.php?route=module/d_social_login/login&provider=<?php echo $provider['id']; ?>"><span class="l-side"><span class="<?php echo $provider['icon']; ?> qc-dsl-icon"></span></span><span class="r-side"><?php echo $provider['heading']; ?></span></a><?php }  ?><?php } ?>
         </div>
       <?php } ?>
     </div>
