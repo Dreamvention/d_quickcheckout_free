@@ -49,6 +49,7 @@ class ControllerModuleQuickcheckout extends Controller {
 		$this->document->addScript('view/javascript/shopunity/codemirror/css.js');
 		$this->document->addStyle('view/javascript/shopunity/uniform/css/uniform.default.css');
 		$this->document->addScript('view/javascript/shopunity/uniform/jquery.uniform.min.js');
+		$this->document->addStyle('view/stylesheet/d_social_login/styles.css');
 
 		$this->document->addLink('//fonts.googleapis.com/css?family=PT+Sans:400,700,700italic,400italic&subset=latin,cyrillic-ext,latin-ext,cyrillic', "stylesheet");
 		
@@ -493,12 +494,12 @@ class ControllerModuleQuickcheckout extends Controller {
 	public function check_d_social_login(){
 		$result = false;
 			if($this->isInstalled('d_social_login')){
-				$full = DIR_SYSTEM . "config/d_social_login_settings.php";
-				$light = DIR_SYSTEM . "config/d_social_login_light_settings.php"; 
+				$full = DIR_SYSTEM . "config/d_social_login.php";
+				$light = DIR_SYSTEM . "config/d_social_login_lite.php"; 
 				if (file_exists($full)) { 
-					$result = 'd_social_login_settings';
+					$result = 'd_social_login';
 				} elseif (file_exists($light)) {
-					$result =  'd_social_login_light_settings';
+					$result =  'd_social_login_lite';
 				}
 			}
 		return $result;
