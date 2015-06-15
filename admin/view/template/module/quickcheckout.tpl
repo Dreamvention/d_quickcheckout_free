@@ -28,7 +28,7 @@
     </div>
     <div class="content">
       <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form">
-    	<div class="vtabs">
+      <div class="vtabs">
         <ul>
           <li><a href="#home" id="vtab_item_1" class="vtab-item"><i class="icon-home"></i><span>Home</span></a></li>
           <li><a href="#general" id="vtab_item_1" class="vtab-item"><i class="icon-settings"></i><span><?php echo $text_general; ?></span></a></li>
@@ -416,20 +416,20 @@ $column_4 = $quickcheckout['general']['column_width'][4]/$main_width; ?>
 
 </style>
 <script type="text/javascript">
-var editor = CodeMirror.fromTextArea(document.getElementById("general_checkout_style"), {});
+// var editor = CodeMirror.fromTextArea(document.getElementById("general_checkout_style"), {});
 
 
-  function resizeMenu(){
-  /*  $("#tabs_menu").css({minHeight:($('.content').height())});
-    console.log($('.content').height());*/
-  }
-  $(document).ready(function(){
-    resizeMenu();
+//   function resizeMenu(){
+//     $("#tabs_menu").css({minHeight:($('.content').height())});
+//     console.log($('.content').height());
+//   }
+//   $(document).ready(function(){
+//     resizeMenu();
 
       
     
     
-  })
+//   })
 
   $('#tabs_menu a').tabs();
   $('#tabs_menu a').click(function(){
@@ -450,105 +450,105 @@ var editor = CodeMirror.fromTextArea(document.getElementById("general_checkout_s
         $("input:checkbox.styled, input:radio.styled").uniform();
       });
 
-$(function() {
-  $('#checkout_select_all').click(function(){
-    $('input:checkbox').attr('checked', 'checked')
-    $.uniform.update();
-  })
+// $(function() {
+//   $('#checkout_select_all').click(function(){
+//     $('input:checkbox').attr('checked', 'checked')
+//     $.uniform.update();
+//   })
   
-  $('#checkout_unselect_all').click(function(){
-    $('input:checkbox').removeAttr('checked')
-    $.uniform.update();
-  })
+//   $('#checkout_unselect_all').click(function(){
+//     $('input:checkbox').removeAttr('checked')
+//     $.uniform.update();
+//   })
   
-  $('.sortable > tr').tsort({attr:'sort-data'});
+//   $('.sortable > tr').tsort({attr:'sort-data'});
   
-  $( ".sortable" ).sortable({
-    revert: true,
-    cursor: "move",
-    items: "> .sort-item",
-    containment: "document",
-     distance: 5 ,
-    opacity: 0.8,
-    stop: function( event, ui ) {
-      $(this).find("tr").each(function(i, el){
-        $(this).find(".sort").val($(el).index())
-        //alert($('[name="'+$(this).find(".sort").attr('name')+'"]').val())
-      });
-    }
-  });
-  var main_width = 100 / 576;
+//   $( ".sortable" ).sortable({
+//     revert: true,
+//     cursor: "move",
+//     items: "> .sort-item",
+//     containment: "document",
+//      distance: 5 ,
+//     opacity: 0.8,
+//     stop: function( event, ui ) {
+//       $(this).find("tr").each(function(i, el){
+//         $(this).find(".sort").val($(el).index())
+//         //alert($('[name="'+$(this).find(".sort").attr('name')+'"]').val())
+//       });
+//     }
+//   });
+//   var main_width = 100 / 576;
   
-        $( "#slider" ).slider({
-      range: true,    
-            min: 0,
-            max: 576,
-      step: 5.76,
-            values: [ <?php echo $column_1; ?>,  <?php echo ($column_1 + $column_2); ?>],
-      slide: function( event, ui ) {
+//         $( "#slider" ).slider({
+//       range: true,    
+//             min: 0,
+//             max: 576,
+//       step: 5.76,
+//             values: [ <?php echo $column_1; ?>,  <?php echo ($column_1 + $column_2); ?>],
+//       slide: function( event, ui ) {
         
-        $('.column-data-1').val(Math.round(main_width*(ui.values[ 0 ])))
-                .attr('width-data', ui.values[ 0 ])
-                .attr('left-data', 0)
-                .css({'width' : parseInt( ui.values[ 0 ] ) + 'px'})
-        $('.column-data-2').val(Math.round(main_width*(ui.values[ 1 ] - ui.values[ 0 ])))
-                .attr('width-data',ui.values[ 1 ] - ui.values[ 0 ])
-                .attr('left-data', parseInt(ui.values[ 0 ]+10))
-                .css({'width' : parseInt( ui.values[ 1 ] - ui.values[ 0 ]) + 'px'})
-        $('.column-data-3').val(Math.round(main_width*(576 - ui.values[ 1 ])))
-                .attr('width-data',576 - ui.values[ 1 ])
-                .attr('left-data', parseInt(ui.values[ 1 ]))
-                .css({'width' : parseInt( 576 - ui.values[ 1 ]) + 'px'})
-        $('.column-data-4').val(Math.round(main_width*(576 - ui.values[ 0 ])))
-                .attr('width-data',576 - ui.values[ 0 ])
-        $('.column-1').css({'width' :  parseInt( ui.values[ 0 ]) +'px' })
-        $('.column-2').css({'width' : parseInt( ui.values[ 1 ] - ui.values[ 0 ])+'px'})
-        $('.column-3').css({'width' :  parseInt(576 - ui.values[ 1 ]) +'px'})
-        $('.column-4').css({'width' :  parseInt(576 - ui.values[ 0 ]) +'px'})
-        $('#column_group_2').css({'width' :  parseInt(576 - ui.values[ 0 ]) +'px'})
+//         $('.column-data-1').val(Math.round(main_width*(ui.values[ 0 ])))
+//                 .attr('width-data', ui.values[ 0 ])
+//                 .attr('left-data', 0)
+//                 .css({'width' : parseInt( ui.values[ 0 ] ) + 'px'})
+//         $('.column-data-2').val(Math.round(main_width*(ui.values[ 1 ] - ui.values[ 0 ])))
+//                 .attr('width-data',ui.values[ 1 ] - ui.values[ 0 ])
+//                 .attr('left-data', parseInt(ui.values[ 0 ]+10))
+//                 .css({'width' : parseInt( ui.values[ 1 ] - ui.values[ 0 ]) + 'px'})
+//         $('.column-data-3').val(Math.round(main_width*(576 - ui.values[ 1 ])))
+//                 .attr('width-data',576 - ui.values[ 1 ])
+//                 .attr('left-data', parseInt(ui.values[ 1 ]))
+//                 .css({'width' : parseInt( 576 - ui.values[ 1 ]) + 'px'})
+//         $('.column-data-4').val(Math.round(main_width*(576 - ui.values[ 0 ])))
+//                 .attr('width-data',576 - ui.values[ 0 ])
+//         $('.column-1').css({'width' :  parseInt( ui.values[ 0 ]) +'px' })
+//         $('.column-2').css({'width' : parseInt( ui.values[ 1 ] - ui.values[ 0 ])+'px'})
+//         $('.column-3').css({'width' :  parseInt(576 - ui.values[ 1 ]) +'px'})
+//         $('.column-4').css({'width' :  parseInt(576 - ui.values[ 0 ]) +'px'})
+//         $('#column_group_2').css({'width' :  parseInt(576 - ui.values[ 0 ]) +'px'})
 
-        $(".ui-slider-handle").attr('href', '#design')
+//         $(".ui-slider-handle").attr('href', '#design')
         
               
-      }
-    });
-  $( ".column" ).sortable({
-            connectWith: ".column",
-      scroll: false,
-      stop: function( event, ui ) {
-      $('.column').find("li").each(function(i, el){
+//       }
+//     });
+//   $( ".column" ).sortable({
+//             connectWith: ".column",
+//       scroll: false,
+//       stop: function( event, ui ) {
+//       $('.column').find("li").each(function(i, el){
         
-        $(this).find(".row-data").val($(el).index())
-        $(this).find(".col-data").val($(this).parent().attr('col-data'))
+//         $(this).find(".row-data").val($(el).index())
+//         $(this).find(".col-data").val($(this).parent().attr('col-data'))
 
-      });
-      }
-        });
+//       });
+//       }
+//         });
  
-  $( ".column" ).disableSelection();
-  $('.column > li').tsort({attr:'row-data'});
-  $('.column > li').each(function(){
-        $(this).appendTo('.column-' + $(this).attr('col-data'));          
-                  })
-  $(".sort-item  td:last-child").append('<i class="icon-drag"></i>')
+//   $( ".column" ).disableSelection();
+//   $('.column > li').tsort({attr:'row-data'});
+//   $('.column > li').each(function(){
+//         $(this).appendTo('.column-' + $(this).attr('col-data'));          
+//                   })
+//   $(".sort-item  td:last-child").append('<i class="icon-drag"></i>')
   
   
-  $('#general_checkout_style').autosize();  
-  $('#checkout_settings').val(decodeURIComponent(($('#form').serialize())))
+//   $('#general_checkout_style').autosize();  
+//   $('#checkout_settings').val(decodeURIComponent(($('#form').serialize())))
   
-  $('#checkout_settings_checkbox').live('click', function(){
-    if($(this).attr('checked')) {
-      $('#checkout_settings').fadeIn()
-      $('#checkout_settings').select()
-      }else{
-      $('#checkout_settings').fadeOut()
+//   $('#checkout_settings_checkbox').live('click', function(){
+//     if($(this).attr('checked')) {
+//       $('#checkout_settings').fadeIn()
+//       $('#checkout_settings').select()
+//       }else{
+//       $('#checkout_settings').fadeOut()
       
-      }                     
-    })
-   $('#checkout_settings').click(function(){
-     $(this).select()
-     })
-});
+//       }                     
+//     })
+//    $('#checkout_settings').click(function(){
+//      $(this).select()
+//      })
+// });
 
 /*function image_upload(field, thumb) {
   $('#dialog').remove();
@@ -608,7 +608,7 @@ function addModule() {
 }
 
 function saveAndStay(){
-  $('#general_checkout_style').val(editor.getValue())
+  //$('#general_checkout_style').val(editor.getValue())
     $.ajax( {
       type: "POST",
       url: $('#form').attr( 'action' ) + '&save',
