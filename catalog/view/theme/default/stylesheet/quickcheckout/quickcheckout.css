@@ -659,6 +659,14 @@
 }
 #quickcheckout input[type=radio], #quickcheckout input[type=checkbox]{
 	margin:0px !important}
+
+#option_login_popup label{
+	width: 25%;
+	display: inline-block;
+}
+#option_login_popup .block-row {
+	padding-bottom: 5px;
+}
 #option_login_popup_trigger_wrap{
 	background:rgba(0,0,0,0) !important;
 	padding-right:8px;
