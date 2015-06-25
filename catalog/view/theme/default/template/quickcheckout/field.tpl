@@ -1,7 +1,7 @@
  <?php foreach($fields as $field){
           if(isset($field['type'])) {
-    		    switch ($field['type']) {
-     			    
+            switch ($field['type']) {
+              
           case "heading": ?>
 
         <?php if($field['display']){ ?>
@@ -15,7 +15,7 @@
                 <div>
         <?php } ?>
 
-<?php	break; case "label": ?>
+<?php break; case "label": ?>
 
       <div id="<?php echo $field['id']; ?>_input" class="label-input sort-item <?php echo (!$field['display'])? 'qc-hide' : ''; ?> <?php echo ($field['class'])? $field['class'] : ''; ?>" data-sort="<?php echo $field['sort_order']; ?>">
         <label for="<?php echo $name; ?>_<?php echo $field['id']; ?>"> <span class="required <?php echo (!isset($field['require']) ||  !$field['require']) ? 'qc-hide' : ''; ?>">*</span> <span class="text"><?php echo $field['title']; ?></span> </label>
@@ -24,7 +24,7 @@
         </p>
       </div>
       
-<?php	break;	case "radio": ?>
+<?php break;  case "radio": ?>
 
       <?php if(isset($field['options'])){ ?>
       <div id="<?php echo $field['id']; ?>_input" class="radio-input sort-item <?php echo (!$field['display'])? 'qc-hide' : ''; ?> <?php echo ($field['class'])? $field['class'] : ''; ?>" data-sort="<?php echo $field['sort_order']; ?>">
@@ -51,7 +51,7 @@
 
   <div id="<?php echo $field['id']; ?>_input" class="checkbox-input sort-item <?php echo (!$field['display'])? 'qc-hide' : ''; ?> <?php echo ($field['class'])? $field['class'] : ''; ?>" data-sort="<?php echo $field['sort_order']; ?>">
 
-      <input type="checkbox" name="<?php echo $name; ?>[<?php echo $field['id']; ?>]" id="<?php echo $name; ?>_<?php echo $field['id']; ?>" data-require="<?php echo (isset($field['require']) && $field['require']) ? 'require' : ''; ?>" data-refresh="<?php echo ($field['refresh']) ? $field['refresh'] : 0; ?>"  <?php if (isset($field['value'])) { ?> value="1" <?php }else{ ?> value="0" <?php } ?> <?php if(isset($field['value']) && $field['value'] == 1){?> checked="checked" <?php } ?> class="styled"  autocomplete='off' />
+      <input type="checkbox" name="<?php echo $name; ?>[<?php echo $field['id']; ?>]" id="<?php echo $name; ?>_<?php echo $field['id']; ?>" data-require="<?php echo (isset($field['require']) && $field['require']) ? 'require' : ''; ?>" data-refresh="<?php echo ($field['refresh']) ? $field['refresh'] : 0; ?>"  <?php if (isset($field['value']) && $field['value'] == 1) { ?> value="1" <?php }else{ ?> value="0" <?php } ?> <?php if(isset($field['value']) && $field['value'] == 1){?> checked="checked" <?php } ?> class="styled"  autocomplete='off' />
 
       <label for="<?php echo $name; ?>_<?php echo $field['id']; ?>"> <span class="required <?php echo (!isset($field['require']) ||  !$field['require']) ? 'qc-hide' : ''; ?>">*</span> <span class="text"><?php echo $field['title']; ?></span> <?php echo (!empty($field['tooltip']))? '<i class="icon-help" rel="tooltip" data-help="'.$field['tooltip'] .'"></i>' : '' ; ?></label>
 
@@ -75,27 +75,27 @@
         </select>
       </div>
 
-<?php	break;	case "password": ?>
+<?php break;  case "password": ?>
 
       <div id="<?php echo $field['id']; ?>_input" class="password-input sort-item <?php echo (!$field['display'])? 'qc-hide' : ''; ?> <?php echo ($field['class'])? $field['class'] : ''; ?>" data-sort="<?php echo $field['sort_order']; ?>">
         <label for="<?php echo $name; ?>_<?php echo $field['id']; ?>"> <span class="required <?php echo (!isset($field['require']) ||  !$field['require']) ? 'qc-hide' : ''; ?>">*</span> <span class="text"><?php echo $field['title']; ?></span> <?php echo (!empty($field['tooltip']))? '<i class="icon-help" rel="tooltip" data-help="'.$field['tooltip'] .'"></i>' : '' ; ?></label>
         <input type="password" name="<?php echo $name; ?>[<?php echo $field['id']; ?>]" id="<?php echo $name; ?>_<?php echo $field['id']; ?>" data-require="<?php echo (isset($field['require']) && $field['require']) ? 'require' : ''; ?>" data-refresh="<?php echo ($field['refresh']) ? $field['refresh'] : 0; ?>" value="<?php echo isset($field['value'])? $field['value'] : ''; ?>" placeholder="<?php echo (isset($field['require']) &&  $field['require']) ? '*' : ''; ?> <?php echo str_replace(':', '', $field['title']); ?>"/>
       </div>
 
-<?php	break; case "textarea": ?>
+<?php break; case "textarea": ?>
 
       <div id="<?php echo $field['id']; ?>_input" class="textarea-input sort-item <?php echo (!$field['display'])? 'qc-hide' : ''; ?> <?php echo ($field['class'])? $field['class'] : ''; ?>" data-sort="<?php echo $field['sort_order']; ?>">
         <label for="<?php echo $name; ?><?php echo $field['id']; ?>"> <span class="required <?php echo (!isset($field['require']) ||  !$field['require']) ? 'qc-hide' : ''; ?>">*</span> <span class="text"><?php echo $field['title']; ?></span> <?php echo (!empty($field['tooltip']))? '<i class="icon-help" data-help="'.$field['tooltip'] .'"></i>' : '' ; ?></label>
         <textarea name="<?php echo $name; ?>[<?php echo $field['id']; ?>]" id="<?php echo $name; ?>_<?php echo $field['id']; ?>" data-require="<?php echo (isset($field['require']) && $field['require']) ? 'require' : ''; ?>" data-refresh="<?php echo ($field['refresh']) ? $field['refresh'] : 0; ?>" placeholder="<?php echo (isset($field['require']) &&  $field['require']) ? '*' : ''; ?> <?php echo str_replace(':', '', $field['title']); ?>"><?php echo isset($field['value'])? $field['value'] : ''; ?></textarea>
       </div>
       
-<?php	break;  default: ?>
+<?php break;  default: ?>
 
       <div id="<?php echo $field['id']; ?>_input" class="text-input sort-item <?php echo (!$field['display'])? 'qc-hide' : ''; ?> <?php echo ($field['class'])? $field['class'] : ''; ?>" data-sort="<?php echo $field['sort_order']; ?>">
 
         <label for="<?php echo $name; ?>_<?php echo $field['id']; ?>"> <span class="required <?php echo (!isset($field['require']) ||  !$field['require']) ? 'qc-hide' : ''; ?>">*</span> <span class="text"><?php echo $field['title']; ?></span> <?php echo (!empty($field['tooltip']))? '<i class="icon-help" rel="tooltip" data-help="'.$field['tooltip'] .'"></i>' : '' ; ?></label>
 
-        <input type="text" name="<?php echo $name; ?>[<?php echo $field['id']; ?>]" id="<?php echo $name; ?>_<?php echo $field['id']; ?>" data-require="<?php echo (isset($field['require']) && $field['require']) ? 'require' : ''; ?>" data-refresh="<?php echo ($field['refresh']) ? $field['refresh'] : 0; ?>" value="<?php echo isset($field['value'])? $field['value'] : ''; ?>" placeholder="<?php echo (isset($field['require']) && $field['require']) ? '*' : ''; ?> <?php echo str_replace(':', '', $field['title']); ?>"/>
+        <input type="text" autocomplite="on" name="<?php echo $name; ?>[<?php echo $field['id']; ?>]" id="<?php echo $name; ?>_<?php echo $field['id']; ?>" data-require="<?php echo (isset($field['require']) && $field['require']) ? 'require' : ''; ?>" data-refresh="<?php echo ($field['refresh']) ? $field['refresh'] : 0; ?>" value="<?php echo isset($field['value'])? $field['value'] : ''; ?>" placeholder="<?php echo (isset($field['require']) && $field['require']) ? '*' : ''; ?> <?php echo str_replace(':', '', $field['title']); ?>"/>
 
       </div>
     <?php } //switch ?>
