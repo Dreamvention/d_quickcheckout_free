@@ -51,7 +51,7 @@
 
   <div id="<?php echo $field['id']; ?>_input" class="checkbox-input sort-item <?php echo (!$field['display'])? 'qc-hide' : ''; ?> <?php echo ($field['class'])? $field['class'] : ''; ?>" data-sort="<?php echo $field['sort_order']; ?>">
 
-      <input type="checkbox" name="<?php echo $name; ?>[<?php echo $field['id']; ?>]" id="<?php echo $name; ?>_<?php echo $field['id']; ?>" data-require="<?php echo (isset($field['require']) && $field['require']) ? 'require' : ''; ?>" data-refresh="<?php echo ($field['refresh']) ? $field['refresh'] : 0; ?>"  <?php if (isset($field['value'])) { ?> value="1" <?php }else{ ?> value="0" <?php } ?> <?php if(isset($field['value']) && $field['value'] == 1){?> checked="checked" <?php } ?> class="styled"  autocomplete='off' />
+      <input type="checkbox" name="<?php echo $name; ?>[<?php echo $field['id']; ?>]" id="<?php echo $name; ?>_<?php echo $field['id']; ?>" data-require="<?php echo (isset($field['require']) && $field['require']) ? 'require' : ''; ?>" data-refresh="<?php echo ($field['refresh']) ? $field['refresh'] : 0; ?>"  <?php if (isset($field['value']) && $field['value'] == 1) { ?> value="1" <?php }else{ ?> value="0" <?php } ?> <?php if(isset($field['value']) && $field['value'] == 1){?> checked="checked" <?php } ?> class="styled"  autocomplete='off' />
 
       <label for="<?php echo $name; ?>_<?php echo $field['id']; ?>"> <span class="required <?php echo (!isset($field['require']) ||  !$field['require']) ? 'qc-hide' : ''; ?>">*</span> <span class="text"><?php echo $field['title']; ?></span> <?php echo (!empty($field['tooltip']))? '<i class="icon-help" rel="tooltip" data-help="'.$field['tooltip'] .'"></i>' : '' ; ?></label>
 
@@ -95,7 +95,7 @@
 
         <label for="<?php echo $name; ?>_<?php echo $field['id']; ?>"> <span class="required <?php echo (!isset($field['require']) ||  !$field['require']) ? 'qc-hide' : ''; ?>">*</span> <span class="text"><?php echo $field['title']; ?></span> <?php echo (!empty($field['tooltip']))? '<i class="icon-help" rel="tooltip" data-help="'.$field['tooltip'] .'"></i>' : '' ; ?></label>
 
-        <input type="text" name="<?php echo $name; ?>[<?php echo $field['id']; ?>]" id="<?php echo $name; ?>_<?php echo $field['id']; ?>" data-require="<?php echo (isset($field['require']) && $field['require']) ? 'require' : ''; ?>" data-refresh="<?php echo ($field['refresh']) ? $field['refresh'] : 0; ?>" value="<?php echo isset($field['value'])? $field['value'] : ''; ?>" placeholder="<?php echo (isset($field['require']) && $field['require']) ? '*' : ''; ?> <?php echo str_replace(':', '', $field['title']); ?>"/>
+        <input type="text" autocomplite="on" name="<?php echo $name; ?>[<?php echo $field['id']; ?>]" id="<?php echo $name; ?>_<?php echo $field['id']; ?>" data-require="<?php echo (isset($field['require']) && $field['require']) ? 'require' : ''; ?>" data-refresh="<?php echo ($field['refresh']) ? $field['refresh'] : 0; ?>" value="<?php echo isset($field['value'])? $field['value'] : ''; ?>" placeholder="<?php echo (isset($field['require']) && $field['require']) ? '*' : ''; ?> <?php echo str_replace(':', '', $field['title']); ?>"/>
 
       </div>
     <?php } //switch ?>

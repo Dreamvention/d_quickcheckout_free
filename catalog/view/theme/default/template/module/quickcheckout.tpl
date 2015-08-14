@@ -1,4 +1,5 @@
-<!-- Quick Checkout v4.0.5 by Dreamvention.com module/quickcheckout.tpl -->
+<!-- Quick Checkout v4.3.1 
+	by Dreamvention.com module/quickcheckout.tpl -->
 <style>
 <?php if($settings['general']['block_style'] == 'block') { ?>
 #quickcheckout #step_2 .text-input label,
@@ -175,6 +176,28 @@ function refreshStep(step_number, func){
 
 	$.ajax({
 		url: 'index.php?route=module/quickcheckout/refresh_step'+step_number,
+		type: 'post',
+		data: $('#quickcheckout input[type=\'text\'], #quickcheckout input[type=\'password\'], #quickcheckout input[type=\'checkbox\'], #quickcheckout input[type=\'radio\']:checked, #quickcheckout select, #quickcheckout textarea'),
+		dataType: 'html',
+		beforeSend: function() {
+			
+		},
+		complete: function() {
+				
+		},
+		success: function(html) {
+			$('#step_'+step_number).html(html)
+			if (typeof func == "function") func(); 
+			debug_update()
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+}
+function refreshStepView(step_number, func){
+	$.ajax({
+		url: 'index.php?route=module/quickcheckout/refresh_step_view'+step_number,
 		type: 'post',
 		data: $('#quickcheckout input[type=\'text\'], #quickcheckout input[type=\'password\'], #quickcheckout input[type=\'checkbox\'], #quickcheckout input[type=\'radio\']:checked, #quickcheckout select, #quickcheckout textarea'),
 		dataType: 'html',
@@ -508,11 +531,14 @@ function confirmOrderQC(func){
 			
 		},
 		success: function(html) {
-			console.log(html) 
-			refreshStep(2, function(){
-				refreshStep(3, function(){
-					if (typeof func == "function") func();
-				});
+			console.log(html)
+			// bug with payment address rewriting shipping address 
+			refreshStepView(1, function(){
+				refreshStepView(2, function(){
+					refreshStepView(3, function(){
+						if (typeof func == "function") func();
+					});
+				});	
 			});	
 		},
 		error: function(xhr, ajaxOptions, thrownError) {
@@ -537,10 +563,10 @@ $(document).on('focus', 'input[name=\'payment_address[password]\']', function() 
 
 $(document).on('click', '#quickcheckout input[name="payment_address[shipping]"]', function(event) {			
 <?php if(!$settings['general']['uniform']){?>	
-	if ($(this).val() == 1) {
-		$(this).val(0) 
+	if ($(this).is(':checked')) {
+		$(this).val(1) 
 	} else {
-		$(this).val(1)
+		$(this).val(0)
 	}
 <?php } ?>
 	refreshCheckout(3)
@@ -563,7 +589,7 @@ $(document).on('focus', '#quickcheckout input[type=text], #quickcheckout input[t
 				
 			e.stopImmediatePropagation()
 		});
-    }, 100)
+    }, 50)
 
 	event.stopImmediatePropagation()
 });
@@ -683,10 +709,10 @@ $(document).on('click', '#quickcheckout #confirm_reward', function(event){
 $(document).on('click', '#quickcheckout  input[type=checkbox]', function(event) {
 	console.log('#quickcheckout  input[type=checkbox]') 										
 <?php if(!$settings['general']['uniform']){?>	
-	if ($(this).val() == 1) {
-		$(this).val(0) 
+	if ($(this).is(':checked')) {
+		$(this).val(1) 
 	} else {
-		$(this).val(1)
+		$(this).val(0)
 	}
 <?php } ?>
 	validateCheckbox( $(this).attr('id'))

@@ -163,11 +163,15 @@ class ControllerModuleQuickcheckout extends Controller {
 		$this->cache->delete('quickcheckout');
 		$this->check_order_id();
 		unset($this->session->data['qc_settings']);
-
+                $this->load->model('quickcheckout/order');
 		
 
-		if($this->validate()) {		
+		if($this->validate()) {	
+                        if($this->customer->isLogged()){
+                            $this->modify_order();
+                        }
 			$this->load_settings();
+			$this->modify_order();
 			$this->clear_session();
 
 			if($this->settings['general']['enable']){
@@ -331,9 +335,24 @@ class ControllerModuleQuickcheckout extends Controller {
 				$this->session->data[$field[0]][$field[1]] = $value;
 			}
 		}
+                //Set new session
+		if($this->customer->isLogged()){
+			$this->session->data['payment_address']['islogged'] = 1;
+                        $this->session->data['payment_address']['exists'] = 1;
+		}else{
+			$this->session->data['payment_address']['islogged'] = 0;
+			$this->session->data['payment_address']['exists'] = 0;
+			$this->session->data['shipping_address']['exists'] = 0;
+		}
 
 		if($this->customer->isLogged()){	
 			$this->session->data['account'] = 'logged';
+                        if(!isset($this->session->data['payment_address']['address_id'])){
+                             $this->session->data['payment_address']['address_id'] = $this->customer->getAddressId(); 
+                        }
+                        if(!isset($this->session->data['shipping_address']['address_id'])){
+                            $this->session->data['shipping_address']['address_id'] = $this->session->data['payment_address']['address_id']; 
+                        }
 		} elseif ((!$this->customer->isLogged() 
 			&& isset($this->session->data['account']) 
 			&& $this->session->data['account'] == 'logged') 
@@ -377,8 +396,11 @@ class ControllerModuleQuickcheckout extends Controller {
 			}
 			if (isset($this->session->data['payment_address']['postcode'])) {
 				$this->session->data['shipping_postcode'] = $this->session->data['payment_address']['postcode'];
+                 $this->session->data['shipping_address']['postcode']  = $this->session->data['payment_address']['postcode'];
 			}else{
 				$this->session->data['shipping_postcode'] = '';
+                $this->session->data['shipping_address']['postcode'] = '';
+                        
 			}
 			$this->session->data['shipping_address'] = $this->session->data['payment_address']; 
 		}else{
@@ -394,15 +416,16 @@ class ControllerModuleQuickcheckout extends Controller {
 			}
 			if(isset($this->session->data['shipping_address']['postcode'])){
 				$this->session->data['shipping_postcode'] = $this->session->data['shipping_address']['postcode'];
-			}
+            }else{
+                $this->session->data['shipping_postcode'] = '';
+                $this->session->data['shipping_address']['postcode'] = '';
+            }
 			if(isset($this->session->data['shipping_address']['country_id']) && isset($this->session->data['shipping_address']['zone_id'])){
 				$country_data = $this->get_country_data($this->session->data['shipping_address']['country_id'], $this->session->data['shipping_address']['zone_id']);
 				if (is_array($country_data)) $this->session->data['shipping_address'] = array_merge($this->session->data['shipping_address'], $country_data);
 			}
 		}
-
-
-
+                
 		if($this->customer->isLogged()){	
 			if((isset($this->session->data['payment_address']['address_id']) && $this->session->data['payment_address']['address_id']) && $this->session->data['payment_address']['exists']){
 				$this->session->data['payment_address']['shipping'] = 0;
@@ -427,22 +450,16 @@ class ControllerModuleQuickcheckout extends Controller {
 			if(isset($this->session->data['payment_address']['address_id']) && $this->session->data['payment_address']['address_id'] != 0){
 				$address = $this->model_account_address->getAddress($this->session->data['payment_address']['address_id']);
 				if($address) $this->session->data['payment_address'] = array_merge($this->session->data['payment_address'], $address);
+                         
 			}
-
+                               
 			if(isset($this->session->data['shipping_address']['address_id']) && $this->session->data['shipping_address']['address_id'] != 0 && $this->model_account_address->getAddress($this->session->data['shipping_address']['address_id'])){
 				$address = $this->model_account_address->getAddress($this->session->data['shipping_address']['address_id']);
 				if($address) $this->session->data['shipping_address'] = array_merge($this->session->data['shipping_address'], $address);
+                             
 			}
 		}
-		//Set new session
-		if($this->customer->isLogged()){
-			$this->session->data['payment_address']['islogged'] = 1;
-		}else{
-			$this->session->data['payment_address']['islogged'] = 0;
-			$this->session->data['payment_address']['exists'] = 0;
-			$this->session->data['shipping_address']['exists'] = 0;
-		}
-
+                
 		//Load shipping methods
 		$this->session->data['shipping_methods'] = $this->get_shipping_methods($this->session->data['shipping_address']);
 	
@@ -478,14 +495,17 @@ class ControllerModuleQuickcheckout extends Controller {
 			$this->session->data['payment_method'] = (isset($this->session->data['payment_methods'][$this->request->post['payment_method']]))? $this->session->data['payment_methods'][$this->request->post['payment_method']] : $default_payment_method; 
 		}
 		
-		//Create or Update order
+		
+		
+		$this->after_load_settings();
+	}
+
+	private function modify_order(){
 		if(!isset($this->session->data['order_id'])){
 			$this->create_order();
 		}else{
 			$this->update_order();	
 		}
-		
-		$this->after_load_settings();
 	}
 
 
@@ -676,13 +696,21 @@ class ControllerModuleQuickcheckout extends Controller {
 		if($this->session->data['qc_settings']['option'][$this->session->data['account']]['shipping_address']['require'] == 1) {
 			$this->session->data['payment_address']['shipping'] = 0;
 		}
-
-
-		if(isset($this->session->data['account']) && isset($this->session->data['payment_address']['shipping'])){
-			if($this->session->data['payment_address']['shipping'] || !$this->settings['option'][$this->session->data['account']]['shipping_address']['display']){
+		if($this->customer->isLogged() && $this->session->data['payment_address']['address_id'] == 0){
+			if(!$this->settings['option'][$this->session->data['account']]['shipping_address']['display']){
 				return true;
 			}
-		}	 
+			if( $this->session->data['payment_address']['shipping'] == 1){
+				return true;
+			}
+		}
+
+		if(!$this->customer->isLogged() && isset($this->session->data['account']) && isset($this->session->data['payment_address']['shipping'])){
+			if($this->session->data['payment_address']['shipping'] || !$this->settings['option'][$this->session->data['account']]['shipping_address']['display']){
+				 
+				return true;
+			}
+		} 
 		return false;
 	}
 	
@@ -918,15 +946,17 @@ class ControllerModuleQuickcheckout extends Controller {
 				$this->data['code'] = '';
 			}
 
-			$this->data['settings'] = $this->settings;
-			$this->data['data'] = $this->array_merge_recursive_distinct($this->settings['option'][$this->session->data['account']]['payment_method'],$this->settings['step']['payment_method']);
-			$lang = $this->language_merge($this->data['data'], $this->texts);
-			$this->data['data'] = $this->array_merge_recursive_distinct($this->data['data'], $lang);
-
+			
 		} else {
 			
 			$this->data['error_warning'] = sprintf($this->language->get('error_no_payment'), $this->url->link('information/contact'));
 		}
+                
+                $this->data['settings'] = $this->settings;
+                $this->data['data'] = $this->array_merge_recursive_distinct($this->settings['option'][$this->session->data['account']]['payment_method'],$this->settings['step']['payment_method']);
+		$lang = $this->language_merge($this->data['data'], $this->texts);
+		$this->data['data'] = $this->array_merge_recursive_distinct($this->data['data'], $lang);
+
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/quickcheckout/payment_method.tpl')) {
         	$this->template = $this->config->get('config_template') . '/template/quickcheckout/payment_method.tpl';
@@ -1284,6 +1314,7 @@ class ControllerModuleQuickcheckout extends Controller {
 	public function confirm_order(){
 		
 		$this->load_settings();
+		$this->modify_order();
 		
 		$this->get_total_data($total_data, $total, $taxes);
 		$data = array();
@@ -1608,8 +1639,8 @@ class ControllerModuleQuickcheckout extends Controller {
 			$data['payment_firstname'] = $payment_address['firstname'];
 			$data['payment_lastname'] = $payment_address['lastname'];	
 			$data['payment_company'] = $payment_address['company'];	
-			$data['payment_company_id'] = $payment_address['company_id'];	
-			$data['payment_tax_id'] = $payment_address['tax_id'];	
+			$data['payment_company_id'] = ($payment_address['company_id']) ? $payment_address['company_id'] : '';	
+			$data['payment_tax_id'] = ($payment_address['tax_id']) ? $payment_address['tax_id']: '';	
 			$data['payment_address_1'] = $payment_address['address_1'];
 			$data['payment_address_2'] = $payment_address['address_2'];
 			$data['payment_city'] = $payment_address['city'];
@@ -2027,6 +2058,7 @@ class ControllerModuleQuickcheckout extends Controller {
 	
 	public function update_settings(){
 		$this->load_settings();
+		$this->modify_order();
 		$json = array();
 		if($this->cart->hasProducts() || !empty($this->session->data['vouchers'])){
 			$json['success'] = $this->session->data;
@@ -2093,7 +2125,8 @@ class ControllerModuleQuickcheckout extends Controller {
 				unset($this->session->data['payment_country_id']);	
 				unset($this->session->data['payment_zone_id']);	
 			}					
-			
+			unset($this->session->data['shipping_method']);	
+			unset($this->session->data['payment_method']);	
 			$json['reload'] = $this->settings['general']['login_refresh'];
 		}
 		$this->response->setOutput(json_encode($json));		
@@ -2101,6 +2134,7 @@ class ControllerModuleQuickcheckout extends Controller {
 
 	public function refresh(){
 		$this->load_settings();
+		$this->modify_order();
 		$this->response->setOutput($this->index());
 	}
 
@@ -2109,6 +2143,7 @@ class ControllerModuleQuickcheckout extends Controller {
 	*/	
 	public function refresh_payments(){
 		$this->load_settings();
+		$this->modify_order();
 		if($this->cart->hasProducts() || !empty($this->session->data['vouchers'])){
 			
 			
@@ -2128,6 +2163,15 @@ class ControllerModuleQuickcheckout extends Controller {
 	*/	
 	public function refresh_step1(){	
 		$this->load_settings();
+		$this->modify_order();
+		if(($this->cart->hasProducts() || !empty($this->session->data['vouchers'])) && !$this->customer->isLogged()){
+			$this->response->setOutput($this->get_login_view());
+		}else{
+			$this->response->setOutput(false);
+		}
+	}
+	public function refresh_step_view1(){	
+		$this->load_settings();
 		if(($this->cart->hasProducts() || !empty($this->session->data['vouchers'])) && !$this->customer->isLogged()){
 			$this->response->setOutput($this->get_login_view());
 		}else{
@@ -2136,13 +2180,32 @@ class ControllerModuleQuickcheckout extends Controller {
 	}
 	public function refresh_step2(){	
 		$this->load_settings();
+		$this->modify_order();
 		if($this->cart->hasProducts() || !empty($this->session->data['vouchers'])){
 			$this->response->setOutput($this->get_payment_address_view());
 		}else{
 			$this->response->setOutput(false);	
 		}
 	}
+	public function refresh_step_view2(){
+		$this->load_settings();
+		if($this->cart->hasProducts() || !empty($this->session->data['vouchers'])){
+			$this->response->setOutput($this->get_payment_address_view());
+		}else{
+			$this->response->setOutput(false);	
+		}
+	}
+	
 	public function refresh_step3(){	
+		$this->load_settings();
+		$this->modify_order();
+		if($this->cart->hasProducts() || !empty($this->session->data['vouchers'])){
+			$this->response->setOutput($this->get_shipping_address_view());
+		}else{
+			$this->response->setOutput(false);
+		}
+	}
+	public function refresh_step_view3(){
 		$this->load_settings();
 		if($this->cart->hasProducts() || !empty($this->session->data['vouchers'])){
 			$this->response->setOutput($this->get_shipping_address_view());
@@ -2152,6 +2215,7 @@ class ControllerModuleQuickcheckout extends Controller {
 	}
 	public function refresh_step4(){	
 		$this->load_settings();
+		$this->modify_order();
 		if($this->cart->hasProducts() || !empty($this->session->data['vouchers'])){
 			$this->response->setOutput($this->get_shipping_method_view());
 		}else{
@@ -2160,6 +2224,7 @@ class ControllerModuleQuickcheckout extends Controller {
 	}
 	public function refresh_step5(){	
 		$this->load_settings();
+		$this->modify_order();
 		if($this->cart->hasProducts() || !empty($this->session->data['vouchers'])){
 			$this->response->setOutput($this->get_payment_method_view());
 		}else{
@@ -2168,6 +2233,7 @@ class ControllerModuleQuickcheckout extends Controller {
 	}
 	public function refresh_step6(){	
 		$this->load_settings();
+		$this->modify_order();
 		if($this->cart->hasProducts() || !empty($this->session->data['vouchers'])){
 			$this->response->setOutput($this->get_cart_view());
 		}else{
@@ -2177,6 +2243,7 @@ class ControllerModuleQuickcheckout extends Controller {
 
 	public function refresh_step7(){	
 		$this->load_settings();
+		$this->modify_order();
 		if($this->cart->hasProducts() || !empty($this->session->data['vouchers'])){
 			$this->response->setOutput($this->get_payment_view());
 		}else{
@@ -2186,6 +2253,7 @@ class ControllerModuleQuickcheckout extends Controller {
 
 	public function refresh_step8(){	
 		$this->load_settings();
+		$this->modify_order();
 		if($this->cart->hasProducts() || !empty($this->session->data['vouchers'])){
 			$this->response->setOutput($this->get_confirm_view());
 		}else{
@@ -2201,6 +2269,7 @@ class ControllerModuleQuickcheckout extends Controller {
 		$result = true;
 		if(isset($this->request->post['field'])){
 			$this->load_settings();
+			$this->modify_order();
 			
 			$field = explode("[", $this->request->post['field']);
 			$field[1] =str_replace("]", "", $field[1]);
@@ -2235,9 +2304,10 @@ class ControllerModuleQuickcheckout extends Controller {
 		$this->load->model('catalog/information');
 		$json = array();
 		$this->load_settings();
+		$this->modify_order();
 		
 		foreach($this->request->post as $step => $data){
-			if(isset($this->request->post[$step])){
+			if(isset($this->request->post[$step]) && $step != "option" && $step != "mijoshop_store_id" ){
 				$settings = $this->array_merge_recursive_distinct($this->settings['step'][$step], $this->settings['option'][$this->session->data['account']][$step]);
 				foreach($this->request->post[$step] as $key => $value){
 					if(isset($settings['fields'][$key]['error'])){
@@ -2429,6 +2499,10 @@ class ControllerModuleQuickcheckout extends Controller {
 						if((strpos($result[$text], '%s') !== false) && isset($array_full['information_id'])){
 							$information_info = $this->model_catalog_information->getInformation($array_full['information_id']);
 							
+                                                        if(isset($information_info['title']) && substr_count($result[$text], '%s') == 2){
+								$result[$text] = sprintf($result[$text], $this->url->link('information/information/info', 'information_id=' . $array_full['information_id'], 'SSL') );	
+							}
+                                                        
 							if(isset($information_info['title']) && substr_count($result[$text], '%s') == 3){
 								$result[$text] = sprintf($result[$text], $this->url->link('information/information/info', 'information_id=' . $array_full['information_id'], 'SSL'), $information_info['title'], $information_info['title']);	
 							}
@@ -2466,6 +2540,9 @@ class ControllerModuleQuickcheckout extends Controller {
 						if((strpos($result[$text], '%s') !== false) && isset($array_full['information_id'])){
 							$information_info = $this->model_catalog_information->getInformation($array_full['information_id']);
 							if (strpos($result[$text], '<a') !== false) {
+                                                                if(isset($information_info['title']) && substr_count($result[$text], '%s') == 2){
+									$result[$text] = sprintf($result[$text], $this->url->link('information/information/info', 'information_id=' . $array_full['information_id'], 'SSL'), $information_info['title'] );	
+								}
 								if(isset($information_info['title']) && substr_count($result[$text], '%s') == 3){
 									$result[$text] = sprintf($result[$text], $this->url->link('information/information/info', 'information_id=' . $array_full['information_id'], 'SSL'), $information_info['title'], $information_info['title']);	
 								}
@@ -2818,6 +2895,7 @@ class ControllerModuleQuickcheckout extends Controller {
 	
 	public function debug(){
 		$this->load_settings();
+		$this->modify_order();
 		$this->data['settings'] = $this->settings;
 		$this->data['checkout'] = $this->session->data;
 		
