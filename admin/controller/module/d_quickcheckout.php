@@ -14,18 +14,28 @@ class ControllerModuleDQuickcheckout extends Controller {
 	private $error = array(); 
 	
 
-	public function index(){
+	public function __construct($registry) {
+		parent::__construct($registry);
+		$this->load->model('module/d_quickcheckout');
   
-  $this->load->model($this->route);
+    	$this->mbooth = $this->model_module_d_quickcheckout->getMboothFile($this->id, $this->sub_versions);
 
-		$this->mbooth = $this->model_module_d_quickcheckout->getMboothFile($this->id, $this->sub_versions);
+		if (isset($this->request->get['store_id'])) { 
+			  $this->store_id = $this->request->get['store_id'];
+		}
 
-		$this->model_module_d_quickcheckout->installDatabase();
+		//$this->model_module_d_quickcheckout->installDependencies($this->mbooth);
+	}
+
+	public function index(){
+
+	
 
 		$this->config_file = $this->model_module_d_quickcheckout->getConfigFile($this->id, $this->sub_versions);
 
 		//dependencies
-		$this->language->load($this->route);
+		$this->load->language($this->route);
+		$this->load->language($this->route.'_instruction');
 		$this->load->model('setting/setting');
 		$this->load->model('setting/extension');
 
@@ -38,7 +48,8 @@ class ControllerModuleDQuickcheckout extends Controller {
 			}
 			$this->model_setting_setting->editSetting($this->id, $this->request->post, $this->store_id);
 			$this->session->data['success'] = $this->language->get('text_success'); 
-			$this->response->redirect(html_entity_decode($this->url->link('extension/module', 'token=' . $this->session->data['token'], 'SSL')));
+		
+   $this->response->redirect(html_entity_decode($this->url->link('extension/module', 'token=' . $this->session->data['token'], 'SSL')));
 			
 		}
 
@@ -116,7 +127,7 @@ class ControllerModuleDQuickcheckout extends Controller {
 		// Heading
 		$this->document->setTitle($this->language->get('heading_title_main'));
 		$this->data['heading_title'] = $this->language->get('heading_title_main');
-		$this->data['text_edit'] = $this->language->get('text_edit');
+		$this->data['entry_edit'] = $this->language->get('entry_edit');
 		
 		// Variable
 		$this->data['id'] = $this->id;
@@ -128,6 +139,7 @@ class ControllerModuleDQuickcheckout extends Controller {
 		$this->data['support_email'] = $this->model_module_d_quickcheckout->getMboothInfo($this->mbooth)->support_email;
 		$this->data['version'] = $this->model_module_d_quickcheckout->getVersion($this->data['mbooth']);
 		$this->data['token'] =  $this->session->data['token'];
+  $this->data['text_need_full_version'] = $this->language->get('text_need_full_version');
 
 		// Tab
 		$this->data['tab_setting'] = $this->language->get('tab_setting');
@@ -159,6 +171,12 @@ class ControllerModuleDQuickcheckout extends Controller {
 		$this->data['text_enable'] = $this->language->get('text_enable');
 		$this->data['text_select'] = $this->language->get('text_select');
 		$this->data['text_none'] = $this->language->get('text_none');
+  $this->data['text_title'] = $this->language->get('text_title');
+  $this->data['text_description'] = $this->language->get('text_description');
+		$this->data['help_title'] = $this->language->get('help_title');
+	 $this->data['help_description'] = $this->language->get('help_description');
+		$this->data['text_icon'] = $this->language->get('text_icon');
+		$this->data['help_icon'] = $this->language->get('help_icon');
 		$this->data['text_yes'] = $this->language->get('text_yes');
 		$this->data['text_no'] = $this->language->get('text_no');
 		$this->data['text_display'] = $this->language->get('text_display');
@@ -168,6 +186,7 @@ class ControllerModuleDQuickcheckout extends Controller {
 		$this->data['text_register'] = $this->language->get('text_register');
 		$this->data['text_guest'] = $this->language->get('text_guest');
 		$this->data['text_logged'] = $this->language->get('text_logged');
+		
 		$this->data['text_content_top'] = $this->language->get('text_content_top');
 		$this->data['text_content_bottom'] = $this->language->get('text_content_bottom');		
 		$this->data['text_column_left'] = $this->language->get('text_column_left');
@@ -193,9 +212,7 @@ class ControllerModuleDQuickcheckout extends Controller {
 
 		//action
 		$this->data['module_link'] = $this->url->link($this->route, 'token=' . $this->session->data['token'], 'SSL');
-	 
 		$this->data['action'] = $this->url->link($this->route, 'token=' . $this->session->data['token'] . $url, 'SSL');
- 
 		$this->data['cancel'] = $this->url->link('extension/module', 'token=' . $this->session->data['token'], 'SSL');
 		$this->data['add_field'] = $this->url->link('sale/custom_field/add', 'token=' . $this->session->data['token'], 'SSL');
 		$this->data['custom_field'] = $this->url->link('sale/custom_field', 'token=' . $this->session->data['token'], 'SSL');
@@ -238,7 +255,9 @@ class ControllerModuleDQuickcheckout extends Controller {
 		$this->data['entry_enable'] = $this->language->get('entry_enable');
 		$this->data['help_enable'] = $this->language->get('help_enable');
 		$this->data['entry_trigger'] = $this->language->get('entry_trigger');
-		$this->data['help_trigger'] = $this->language->get('help_trigger');
+  $this->data['help_view_shop'] = $this->language->get('help_view_shop');
+	$this->data['help_view_setting'] = $this->language->get('help_view_setting');
+  $this->data['help_trigger'] = $this->language->get('help_trigger');
 		$this->data['help_average_time'] = $this->language->get('help_average_time');
 		$this->data['help_average_rating'] = $this->language->get('help_average_rating');
 		$this->data['text_intro_create_setting'] = $this->language->get('text_intro_create_setting');
@@ -272,8 +291,10 @@ class ControllerModuleDQuickcheckout extends Controller {
 		$this->data['button_save_bulk_setting'] = $this->language->get('button_save_bulk_setting');
 		$this->data['entry_general_analytics_event'] = $this->language->get('entry_general_analytics_event');
 		$this->data['help_general_analytics_event'] = $this->language->get('help_general_analytics_event');
-		
-		//social login
+		$this->data['entry_general_compress'] = $this->language->get('entry_general_compress');
+		$this->data['help_general_compress'] = $this->language->get('help_general_compress');
+	
+  //social login
 		$this->data['text_social_login_required'] = $this->language->get('text_social_login_required');
 		// $this->data['entry_socila_login_style'] = $this->language->get('entry_socila_login_style');
 		// $this->data['help_socila_login_style'] = $this->language->get('help_socila_login_style');
@@ -288,10 +309,12 @@ class ControllerModuleDQuickcheckout extends Controller {
 		$this->data['link_social_login_edit'] = $this->url->link('module/d_social_login', 'token=' . $this->session->data['token'] . '&store_id='.$this->store_id, 'SSL');
 		
 		//Payment address
+  $this->data['title_payment_address'] = $this->language->get('title_payment_address');
 		$this->data['entry_payment_address_display'] = $this->language->get('entry_payment_address_display');
 		$this->data['help_payment_address_display'] = $this->language->get('help_payment_address_display');
 
 		//Shipping address
+  $this->data['title_shipping_address'] = $this->language->get('title_shipping_address');
 		$this->data['entry_shipping_address_display'] = $this->language->get('entry_shipping_address_display');
 		$this->data['help_shipping_address_display'] = $this->language->get('help_shipping_address_display');
 		
@@ -320,8 +343,13 @@ class ControllerModuleDQuickcheckout extends Controller {
 		$this->data['help_payment_method_input_style'] = $this->language->get('help_payment_method_input_style');
 		$this->data['entry_payment_method_default_option'] = $this->language->get('entry_payment_method_default_option');
 		$this->data['help_payment_method_default_option'] = $this->language->get('help_payment_method_default_option');
-		
-		//Cart
+		$this->data['entry_payment_default_payment_popup'] = $this->language->get('entry_payment_default_payment_popup');
+		$this->data['help_payment_default_payment_popup'] = $this->language->get('help_payment_default_payment_popup');
+		$this->data['callout_payment_payment_popup'] = $this->language->get('callout_payment_payment_popup');
+  
+  //Cart
+		$this->data['title_shopping_сart'] = $this->language->get('title_shopping_сart');
+		$this->data['description_shopping_сart'] = $this->language->get('description_shopping_сart');
 		$this->data['entry_cart_display'] = $this->language->get('entry_cart_display');
 		$this->data['help_cart_display'] = $this->language->get('help_cart_display');
 		$this->data['entry_cart_columns_image'] = $this->language->get('entry_cart_columns_image');
@@ -344,7 +372,9 @@ class ControllerModuleDQuickcheckout extends Controller {
 		$this->data['help_design_field'] = $this->language->get('help_design_field');
 		$this->data['entry_design_placeholder'] = $this->language->get('entry_design_placeholder');
 		$this->data['help_design_placeholder'] = $this->language->get('help_design_placeholder');
-		$this->data['entry_design_login_option'] = $this->language->get('entry_design_login_option');
+		$this->data['entry_design_breadcrumb'] = $this->language->get('entry_design_breadcrumb');
+  $this->data['help_design_breadcrumb'] = $this->language->get('help_design_breadcrumb');
+  $this->data['entry_design_login_option'] = $this->language->get('entry_design_login_option');
 		$this->data['help_design_login_option'] = $this->language->get('help_design_login_option');
 		$this->data['entry_design_login'] = $this->language->get('entry_design_login');
 		$this->data['help_design_login'] = $this->language->get('help_design_login');
@@ -377,7 +407,9 @@ class ControllerModuleDQuickcheckout extends Controller {
 		$this->data['column_account'] = $this->language->get('column_account');
 		$this->data['column_total'] = $this->language->get('column_total');
 		$this->data['column_status'] = $this->language->get('column_status');
-		$this->data['column_data'] = $this->language->get('column_data');
+			$this->data['column_shipping_method'] = $this->language->get('column_shipping_method');
+		$this->data['column_payment_method'] = $this->language->get('column_payment_method');
+  $this->data['column_data'] = $this->language->get('column_data');
 		$this->data['column_checkout_time'] = $this->language->get('column_checkout_time');
 		$this->data['column_rating'] = $this->language->get('column_rating');
 
@@ -475,11 +507,11 @@ class ControllerModuleDQuickcheckout extends Controller {
 		$this->data['languages'] = $this->model_localisation_language->getLanguages();
 
     
-        $this->template = 'module/d_quickcheckout.tpl';
-				$this->children = array(
-    'common/d_quickcheckout_header',
-			'common/footer'
-		);
+   $this->template = 'module/d_quickcheckout.tpl';
+    	$this->children = array(
+                 'common/d_quickcheckout_header',
+                	'common/footer'
+        	);
  // $this->data['header'] = $this->getHeader();
 				
 		$this->response->setOutput($this->render());
@@ -492,7 +524,7 @@ class ControllerModuleDQuickcheckout extends Controller {
 	 **/
 
 	public function createSetting(){
-     		$this->load->model($this->route);
+
 		$json = array();
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
 			$setting_name = date('m/d/Y h:i:s a', time());
@@ -510,7 +542,7 @@ class ControllerModuleDQuickcheckout extends Controller {
 	}
 
 	public function deleteSetting(){
-			$this->load->model($this->route);
+		$this->load->language($this->route);
 		
 
 		if (($this->request->server['REQUEST_METHOD'] == 'GET') && $this->validate() && isset($this->request->get['setting_id']) ) {
@@ -565,11 +597,14 @@ class ControllerModuleDQuickcheckout extends Controller {
 
 	public function install() {
 		$this->load->model('module/d_quickcheckout');
+  
+  $this->model_module_d_quickcheckout->deleteOldVersion();
+  
 		$this->model_module_d_quickcheckout->setVqmod('a_vqmod_d_quickcheckout.xml', 1);
 
 		$this->model_module_d_quickcheckout->installDatabase();
 
-		$this->model_module_d_quickcheckout->installDependencies($this->mbooth);
+	//	$this->model_module_d_quickcheckout->installDependencies($this->mbooth);
 
 		$this->getUpdate(1);	  
 	}
