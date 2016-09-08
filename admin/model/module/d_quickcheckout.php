@@ -593,14 +593,14 @@ class ModelModuleDQuickcheckout extends Model {
 	public function getMboothFile($id, $sub_versions){
      
 		$full = DIR_APPLICATION . 'mbooth/xml/mbooth_'. $id .'.xml';
- 
+
 		if (file_exists($full)) {
 			return 'mbooth_'. $id . '.xml';
 		} else{
 			foreach ($sub_versions as $lite){
-				if (file_exists(DIR_APPLICATION . 'mbooth/xml/mbooth_'. $id . '_' . $lite . '.php')) {
+				if (file_exists(DIR_APPLICATION . 'mbooth/xml/mbooth_'. $id . '_' . $lite . '.xml')) {
 					$this->prefix = '_' . $lite;
-					return $this->id . '_' . $lite . '.xml';
+					return 'mbooth_' . $id . '_' . $lite . '.xml';
 				}
 			}
 		}

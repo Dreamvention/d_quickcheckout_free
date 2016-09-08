@@ -598,7 +598,7 @@ class ControllerModuleDQuickcheckout extends Controller {
 	public function install() {
 		$this->load->model('module/d_quickcheckout');
   
-  $this->model_module_d_quickcheckout->deleteOldVersion();
+  //$this->model_module_d_quickcheckout->deleteOldVersion();
   
 		$this->model_module_d_quickcheckout->setVqmod('a_vqmod_d_quickcheckout.xml', 1);
 
