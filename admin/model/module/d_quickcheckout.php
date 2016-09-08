@@ -53,6 +53,7 @@ class ModelModuleDQuickcheckout extends Model {
 			$payment = basename($payment, '.php');
 			$this->load->language('payment/' . $payment);
 			$result[] = array(
+				'status' => $this->config->get($payment . '_status'),
 				'code' => $payment,
 				'title' => $this->language->get('heading_title')
 			);
@@ -75,7 +76,7 @@ class ModelModuleDQuickcheckout extends Model {
 	public function languageFilter($data){
         $this->load->model('catalog/information');
         $result = $data;
-        $translate = array('title');
+        $translate = array('title', 'description');
 
         if(is_array($data)){
 
@@ -86,8 +87,8 @@ class ModelModuleDQuickcheckout extends Model {
                     if(!is_array($value)){
 
                         $result[$key] = $this->escape($this->language->get($value));
-                    }elseif(isset($value[(int)$this->config->get('config_language_id')])){
-                        $result[$key] = $this->escape($value[(int)$this->config->get('config_language_id')]);
+                    // }elseif(isset($value[(int)$this->config->get('config_language_id')])){
+                    //     $result[$key] = $this->escape($value[(int)$this->config->get('config_language_id')]);
                     }else{
                         $result[$key] = $this->languageFilter($value);
                     }
@@ -102,6 +103,10 @@ class ModelModuleDQuickcheckout extends Model {
                         if(isset($information_info['title']) && substr_count($result[$key], '%s') == 2){
                             $result[$key] = sprintf($result[$key], $this->url->link('information/information/agree', 'information_id=' . $result['information_id'], 'SSL'), $information_info['title']);  
                         }
+
+                        if(isset($information_info['title']) && substr_count($result[$key], '%s') == 3){
+                        	$result[$key] = sprintf($result[$key], $this->url->link('information/information/agree', 'information_id=' . $result['information_id'], 'SSL'), $information_info['title'], $information_info['title']);  
+                    }
                     }
 
                 }else{
@@ -204,11 +209,8 @@ class ModelModuleDQuickcheckout extends Model {
 		}
 
 		$full = DIR_SYSTEM . 'config/'. $id . '.php';
- 
 		if (file_exists($full)) {
-     
 			return $id;
-   
 		} 
 
 		foreach ($sub_versions as $lite){
@@ -260,7 +262,61 @@ class ModelModuleDQuickcheckout extends Model {
 		  PRIMARY KEY (`statistic_id`)
 		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
     }
-    public function uninstallDatabase(){
+    
+   public function deleteOldVersion(){
+       if(file_exists(DIR_APPLICATION.'/controller/module/quickcheckout.php')){
+           unlink(DIR_APPLICATION.'/controller/module/quickcheckout.php');
+       }
+       if(file_exists(DIR_APPLICATION.'/language/english/module/quickcheckout.php')){
+           unlink(DIR_APPLICATION.'/language/english/module/quickcheckout.php');
+       }
+       if(file_exists(DIR_APPLICATION.'/view/template/module/quickcheckout.tpl')){
+           unlink(DIR_APPLICATION.'/view/template/module/quickcheckout.tpl');
+       }
+       if(file_exists(DIR_APPLICATION.'/view/stylesheet/quickcheckout.css')){
+           unlink(DIR_APPLICATION.'/view/stylesheet/quickcheckout.css');
+       }
+       if(file_exists(DIR_CATALOG.'/model/quickcheckout/order.php')){
+           unlink(DIR_CATALOG.'/model/quickcheckout/order.php');
+       }
+       if(file_exists(DIR_CATALOG.'/controller/module/quickcheckout.php')){
+           unlink(DIR_CATALOG.'/controller/module/quickcheckout.php');
+       }
+       if(file_exists(DIR_CATALOG.'/view/theme/default/template/checkout/quickcheckout.tpl ')){
+           unlink(DIR_CATALOG.'/view/theme/default/template/checkout/quickcheckout.tpl');
+       }
+       if(file_exists(DIR_CATALOG.'/view/theme/default/template/module/quickcheckout.tpl ')){
+           unlink(DIR_CATALOG.'/view/theme/default/template/module/quickcheckout.tpl ');
+       }
+        if(file_exists(DIR_SYSTEM.'/config/quickcheckout_settings.php ')){
+           unlink(DIR_SYSTEM.'/config/quickcheckout_settings.php ');
+       }
+
+        $array_dirs = array(
+           	DIR_APPLICATION.'/view/image/quickcheckout',
+            DIR_APPLICATION.'/view/javascript/quickcheckout',
+            DIR_CATALOG.'/view/javascript/quickcheckout',
+            DIR_CATALOG.'/view/theme/default/image/quickcheckout', 
+            DIR_CATALOG.'/view/theme/default/stylesheet/quickcheckout',
+            DIR_CATALOG.'/view/theme/default/template/quickcheckout'
+        );
+        foreach($array_dirs as $dir ) {
+            if(is_dir($dir)){
+                if ($objs = glob($dir."/*")) {
+                    foreach($objs as $obj) {
+                         unlink($obj);
+                    }
+                }
+                rmdir($dir);
+            }
+        }
+       	define('DIR_ROOT', substr_replace(DIR_APPLICATION, '/', -8));
+       if(file_exists(DIR_ROOT.'/vqmod/xml/a_vqmod_quickcheckout.xml')){
+           unlink(DIR_ROOT.'/vqmod/xml/a_vqmod_quickcheckout.xml');
+       }
+   }
+   
+   public function uninstallDatabase(){
 
     	$query = $this->db->query("DROP TABLE IF EXISTS `".DB_PREFIX."dqc_setting`");
     	$query = $this->db->query("DROP TABLE IF EXISTS `".DB_PREFIX."dqc_statistic`");
@@ -357,6 +413,7 @@ class ModelModuleDQuickcheckout extends Model {
     }
 
     public function rateStatistic($data){
+ 
     	$total = array('update' => 0, 'click' => 0 , 'error' => 0);
     	$field = 1;
 
@@ -416,7 +473,6 @@ class ModelModuleDQuickcheckout extends Model {
 
 
 	public function getConfigSetting($id, $config_key, $store_id, $config_file = false){
-    
 		if(!$config_file){
 			$config_file = $this->config_file;
 		}
@@ -427,13 +483,11 @@ class ModelModuleDQuickcheckout extends Model {
 		}
 
  		$result = ($this->config->get($config_key)) ? $this->config->get($config_key) : array();
-   
  		$result['general']['default_email'] = $this->config->get('config_email');
  		$result['step']['payment_address']['fields']['agree']['information_id'] = $this->config->get('config_account_id');
    $result['step']['payment_address']['fields']['agree']['error'][0]['information_id'] = $this->config->get('config_account_id');
  		$result['step']['confirm']['fields']['agree']['information_id'] = $this->config->get('config_checkout_id');
    	$result['step']['confirm']['fields']['agree']['error'][0]['information_id'] = $this->config->get('config_checkout_id');
-    //echo "<pre>";    print_r($result );  echo "</pre>";
     
 //		$result['step']['payment_address']['fields'] = $result['step']['payment_address']['fields']; //+ $this->getCustomFieldsConfigDataStep('account');
 //		$result['step']['payment_address']['fields'] = $result['step']['payment_address']['fields']; // + $this->getCustomFieldsConfigDataStep('address');
@@ -593,14 +647,14 @@ class ModelModuleDQuickcheckout extends Model {
 	public function getMboothFile($id, $sub_versions){
      
 		$full = DIR_APPLICATION . 'mbooth/xml/mbooth_'. $id .'.xml';
-
+ 
 		if (file_exists($full)) {
 			return 'mbooth_'. $id . '.xml';
 		} else{
 			foreach ($sub_versions as $lite){
 				if (file_exists(DIR_APPLICATION . 'mbooth/xml/mbooth_'. $id . '_' . $lite . '.xml')) {
 					$this->prefix = '_' . $lite;
-					return 'mbooth_' . $id . '_' . $lite . '.xml';
+					return 'mbooth_'. $id . '_' . $lite . '.xml';
 				}
 			}
 		}
@@ -717,6 +771,7 @@ class ModelModuleDQuickcheckout extends Model {
 			$xml = new SimpleXMLElement(file_get_contents(DIR_APPLICATION . 'mbooth/xml/'. $mbooth_xml));
 			$result = array();
 			$version = false;
+   
 			foreach($xml->required as $require){
 
 				foreach($require->require->attributes() as $key => $value){

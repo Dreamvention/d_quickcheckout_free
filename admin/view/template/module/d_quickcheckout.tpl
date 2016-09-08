@@ -5,11 +5,11 @@
 ?>
 <?php echo $d_quickcheckout_header; ?>
 <div id="content">
-    	<ul class="breadcrumb">
+    <ul class="breadcrumb">
 				<?php foreach ($breadcrumbs as $breadcrumb) { ?>
-				<li><a href="<?php echo $breadcrumb['href']; ?>"><?php echo $breadcrumb['text']; ?></a></li>
+        <li><a href="<?php echo $breadcrumb['href']; ?>"><?php echo $breadcrumb['text']; ?></a></li>
 				<?php } ?>
-			</ul>
+		 	</ul>
     <!--page-header-->
 	<div  >
 		<div class="container-fluid">
@@ -49,11 +49,10 @@
 
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-pencil"></i> <?php echo $text_edit; ?> <?php echo $setting_name; ?></h3>
+                <h3 class="panel-title"><i class="fa fa-pencil"></i> <?php echo $entry_edit; ?> <?php echo $setting_name; ?></h3>
             </div>
             <div class="panel-body">
-		 
-				<form action="<?php echo html_entity_decode($action); ?>" method="post" enctype="multipart/form-data" id="form" class="form-horizontal">
+		 	<form action="<?php echo html_entity_decode($action); ?>" method="post" enctype="multipart/form-data" id="form" class="form-horizontal">
 
 			        <ul  class="nav nav-tabs">
 			            <li class="active"><a href="#setting" data-toggle="tab">
@@ -162,7 +161,8 @@
 																</div>
 																<div class="tile-body">
 																	<a href="<?php echo $setting_value['href']; ?> " target="_blank"><i class="fa fa-eye"></i></a>
-																	<h3 class="pull-right" data-toggle="tooltip" title="<?php echo $help_average_rating; ?>"><?php echo round($setting_value['average_rating'] * 100); ?>%</h3>
+																	<a href="#" class="view_setting " data-setting-id="<?php echo $setting_value['setting_id']; ?>" data-toggle="tooltip" title="<?php echo $help_view_setting; ?>"><i class="fa fa-pencil"></i></a>
+                 <h3 class="pull-right" data-toggle="tooltip" title="<?php echo $help_average_rating; ?>"><?php echo round($setting_value['average_rating'] * 100); ?>%</h3>
 																	
 																</div>
 															</a>
@@ -247,8 +247,9 @@
 
 														
 													</div>
+                                               
 													<div class="col-md-6">
-														<div class="form-group">
+														    <!--<div class="form-group">
 															<label class="col-sm-4 control-label" for="button_update"><?php echo $entry_update; ?></label>
 															<div class="col-sm-4">
 																<a id="button_update" class="btn btn-primary btn-block"><i class="fa fa-refresh"></i> <?php echo $button_update; ?></a>
@@ -256,7 +257,7 @@
 															<div class="col-sm-4">
 																<div id="notification_update"></div>
 															</div>
-														</div><!-- //update -->
+														</div> --><!-- //update -->
 														<div class="form-group">
 															<label class="col-sm-4 control-label" for="button_support_email"><?php echo $entry_support; ?></label>
 															<div class="col-sm-4">
@@ -294,6 +295,10 @@
 												<div class="row">
 													<div class="col-md-6">
 
+														
+
+														
+
 														<div class="form-group">
 															<label class="col-sm-4 control-label" for="input_setting_name">
 																<span data-toggle="tooltip" title="<?php echo $help_name; ?>">
@@ -304,6 +309,8 @@
 																<input type="text" value="<?php echo $setting_name; ?>" name="<?php echo $id; ?>_setting[name]" id="input_setting_name" class="form-control"/>
 															</div>
 														</div>
+
+														
 
 														<div class="form-group">
 															<label class="col-sm-4 control-label" for="input-catalog-limit">
@@ -350,11 +357,47 @@
 																	<?php echo $entry_general_analytics_event; ?>
 																</span>
 															</label>
-															<div class="col-sm-8">
+															<div class="col-sm-2">
 																<input type="hidden" value="0" name="<?php echo $id; ?>_setting[general][analytics_event]" />
 																<input type="checkbox" value="1" name="<?php echo $id; ?>_setting[general][analytics_event]" <?php if(isset($setting['general']['analytics_event']) && $setting['general']['analytics_event'] == 1){ ?>checked="checked"<?php } ?> id="general_analytics_event" />
 															</div>
+                                                            <script>
+                                                                        $("#general_analytics_event").on('switchChange.bootstrapSwitch', function(event, state){
+                                                                if (state){
+                                                                if ( <?php echo ($analytics) ? 0 : 1; ?> ){
+                                                                $("#analytics_message").removeClass('hidden');
+                                                                }
+                                                                } else{
+                                                                $("#analytics_message").addClass('hidden');
+                                                                }
+
+                                                                })
+                                                            </script>
+                                                            <div class="col-sm-6">
+
+                                                                <div id="analytics_message" class="alert alert-danger alert-inline   <?php  if( $setting['general']['analytics_event'] != 1 ||  $setting['general']['analytics_event'] == 1 && $analytics){  echo   'hidden' ; } ?>"  ><?php echo $warning_analytics_event; ?></div>
+
 														</div>
+                                                        </div>
+
+														<div class="form-group">
+															<label class="col-sm-4 control-label" for="input-catalog-limit">
+																<span data-toggle="tooltip" title="<?php echo $help_general_compress; ?>">
+																	<?php echo $entry_general_compress; ?>
+																</span>
+															</label>
+															<div class="col-sm-2">
+																<input type="hidden" value="0" name="<?php echo $id; ?>_setting[general][compress]" />
+																<input type="checkbox" value="1" name="<?php echo $id; ?>_setting[general][compress]" <?php if(isset($setting['general']['compress']) && $setting['general']['compress'] == 1){ ?> checked="checked" <?php } ?> id="general_compress" />
+															</div>
+                                                            <div class="col-sm-6">
+                                                                <button class="btn btn-primary btn-block" id="compress_update"><i class="fa fa-refresh"></i> <?php echo $compress_update; ?></button>
+														</div>
+                                                            <div id="compress-notification" class="col-sm-offset-4 help-block col-sm-8" >
+
+                                                            </div>
+
+                                                        </div>
 
 														<?php if ($config_files) { ?>
 														<div class="form-group">
@@ -523,6 +566,63 @@
 														</div>
 													</div>
 												</div>
+												<div class="form-group">
+													<label class="col-sm-3 control-label" for="input-catalog-limit">
+														<span data-toggle="tooltip" title="<?php echo $help_icon; ?>">
+															<?php echo $text_icon; ?>
+														</span>
+													</label>
+													<div class="col-sm-3">
+														<input type="text" name="<?php echo $id; ?>_setting[step][login][icon]" id="login_icon; ?>" value="<?php echo $setting['step']['login']['icon']; ?>" class="form-control" placeholder="<?php echo $text_icon; ?>">
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="col-sm-3 control-label" for="input-catalog-limit">
+														<span data-toggle="tooltip" title="<?php echo $help_title; ?>">
+															<?php echo $text_title; ?>
+														</span>
+													</label>
+													<div class="col-sm-3">
+														<?php foreach ($languages as $language) { ?>
+														<div id="tab_general_min_order_text_<?php echo $language['language_id']; ?>" class="input-group">
+															<label class="input-group-addon" for="login_option_guest_title_<?php echo $language['language_id']; ?>" title="<?php echo $language['name']; ?>"><img src="view/image/flags/<?php echo $language['image']; ?>" title="<?php echo $language['name']; ?>" /></label>
+															<input type="text" name="<?php echo $id; ?>_setting[step][login][option][guest][title][<?php echo $language['language_id']; ?>]" id="login_option_guest_title_<?php echo $language['language_id']; ?>" value="<?php echo (isset($setting['step']['login']['option']['guest']['title'][$language['language_id']]) && is_array($setting['step']['login']['option']['guest']['title'])) ? $setting['step']['login']['option']['guest']['title'][$language['language_id']] : $setting['step']['login']['option']['guest']['title']; ?>" class="form-control" placeholder="<?php echo $text_guest; ?>">
+														</div>
+														<?php } ?>
+													</div>
+													<div class="col-sm-3">
+														<?php foreach ($languages as $language) { ?>
+														<div id="tab_general_min_order_text_<?php echo $language['language_id']; ?>" class="input-group">
+															<label class="input-group-addon" for="login_option_register_title_<?php echo $language['language_id']; ?>" title="<?php echo $language['name']; ?>"><img src="view/image/flags/<?php echo $language['image']; ?>" title="<?php echo $language['name']; ?>" /></label>
+															<input type="text" name="<?php echo $id; ?>_setting[step][login][option][register][title][<?php echo $language['language_id']; ?>]" id="login_option_register_title_<?php echo $language['language_id']; ?>" value="<?php echo (isset($setting['step']['login']['option']['register']['title'][$language['language_id']]) && is_array($setting['step']['login']['option']['register']['title'])) ? $setting['step']['login']['option']['register']['title'][$language['language_id']] : $setting['step']['login']['option']['register']['title']; ?>" class="form-control"  placeholder="<?php echo $text_register; ?>">
+														</div>
+														<?php } ?>
+													</div>
+													<div class="col-sm-3">
+														<?php foreach ($languages as $language) { ?>
+														<div id="tab_general_min_order_text_<?php echo $language['language_id']; ?>" class="input-group">
+															<label class="input-group-addon" for="login_option_login_title_<?php echo $language['language_id']; ?>" title="<?php echo $language['name']; ?>"><img src="view/image/flags/<?php echo $language['image']; ?>" title="<?php echo $language['name']; ?>" /></label>
+															<input type="text" name="<?php echo $id; ?>_setting[step][login][option][login][title][<?php echo $language['language_id']; ?>]" id="login_option_login_title_<?php echo $language['language_id']; ?>" value="<?php echo (isset($setting['step']['login']['option']['login']['title'][$language['language_id']]) && is_array($setting['step']['login']['option']['login']['title'])) ? $setting['step']['login']['option']['login']['title'][$language['language_id']] : $setting['step']['login']['option']['login']['title']; ?>" class="form-control"  placeholder="<?php echo $text_login; ?>">
+														</div>
+														<?php } ?>
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="col-sm-3 control-label" for="input-catalog-limit">
+														<span data-toggle="tooltip" title="<?php echo $help_description; ?>">
+															<?php echo $text_description; ?>
+														</span>
+													</label>
+													<div class="col-sm-9">
+														
+														<?php foreach ($languages as $language) { ?>
+														<div id="tab_general_min_order_text_<?php echo $language['language_id']; ?>" class="input-group">
+															<label class="input-group-addon" for="login_description_<?php echo $language['language_id']; ?>" title="<?php echo $language['name']; ?>"><img src="view/image/flags/<?php echo $language['image']; ?>" title="<?php echo $language['name']; ?>" /></label>
+															<input type="text" name="<?php echo $id; ?>_setting[step][login][description][<?php echo $language['language_id']; ?>]" id="login_description_<?php echo $language['language_id']; ?>" value="<?php echo (isset($setting['step']['login']['description'][$language['language_id']]) && is_array($setting['step']['login']['description'])) ? $setting['step']['login']['description'][$language['language_id']] : $setting['step']['login']['description']; ?>" class="form-control" >
+														</div>
+														<?php } ?>
+													</div>
+												</div>
 									         	<?php if($social_login) { ?>
 
 													<?php /*<div id="sortable_social_login" class="list-group atab col-md-5">
@@ -585,7 +685,21 @@
 													<div class="bs-callout bs-callout-warning"><?php echo $text_social_login_required; ?></div>
 									        	<?php } ?>
 
-											
+												<script>
+												// $(function() {
+												//   $( "#sortable_social_login" ).sortable({
+												//    axis: "y",
+												//    placeholder: "ui-state-highlight",
+												//    distance: 5,
+												//    stop: function( event, ui ) {
+												//     ui.item.children( ".sort-item" ).triggerHandler( "focusout" );
+												//   $(this).find(".sort-item").each(function(i, el){
+												//    $(this).find(".sort-value").val($(el).index())
+												//   });
+												//    }
+												//   });
+												// });
+												</script>
 											</div><!-- /#login-->
 
 											<!---------------------------------- payment_address ---------------------------------->
@@ -636,14 +750,14 @@
 													<span class="fa fa-check fa-fw"></span> <span><?php echo $text_confirm; ?></span>
 												</h3>
 												<div class="bs-callout bs-callout-warning"><?php echo $text_need_full_version; ?></div>
-
+											</div>
 											<!---------------------------------- design ---------------------------------->
 											<div id="d_design" class="tab-pane">
 
 												<h3 class="page-header">
 													<span class="fa fa-paint-brush fa-fw"></span> <span><?php echo $text_design; ?></span>
 												</h3>
-				`								<div class="bs-callout bs-callout-warning"><?php echo $text_need_full_version; ?></div>
+												<div class="bs-callout bs-callout-warning"><?php echo $text_need_full_version; ?></div>
 				
 											</div><!-- /#design-->
 
@@ -655,6 +769,7 @@
 													</h3>
 													<div class="bs-callout bs-callout-warning"><?php echo $text_need_full_version; ?></div>
 											</div><!-- /#analytics-->
+
 
 										</div> <!-- /.tab-content -->
 									</div> <!-- /.col-sm-10 -->
@@ -692,7 +807,7 @@
 						</div>
 						<div class="tab-pane" id="instruction" >
 							<div class="tab-body">
-								<?php echo $text_instruction; ?>
+								<?php  echo $text_instruction; ?>
 							</div>
 						</div>
 					</div>
@@ -805,7 +920,7 @@ $(function () {
 		'onText': '<?php echo $text_yes; ?>',
 		'offText': '<?php echo $text_no; ?>',
 	});
-
+$('[data-toggle="tooltip"]').tooltip()
 	$('[data-toggle="popover"]').popover()
 
 	$('.qc-step').each(function(){
@@ -879,7 +994,33 @@ $(function () {
 			}
 		});  
 	});
+    $('body').on('click', '#compress_update', function(e){
 
+        $.ajax({                                                            
+            url: 'index.php?route=module/d_quickcheckout/updateCompress&token=<?php echo $token; ?>',
+            type: 'post',
+            dataType: 'json',
+            data:  'setting_id=<?php echo $setting_id; ?>&setting=' + $('#bulk_setting').val(),
+            beforeSend: function() {
+               $('#form').fadeTo('slow', 0.5);
+            },
+            complete: function() {
+                $('#form').fadeTo('slow', 1);
+            },
+            success: function(json) {
+                $('.alert').remove();
+                   if (json['success']){
+                        $('#compress-notification').prepend('<div class="alert alert-success alert-inline">' + json['success'] + '</div>')
+                   }
+                   if (json['error']){
+                       $('#compress-notification').prepend('<div class="alert alert-warning alert-inline">' + json['error'] + '</div>')
+                   }
+
+
+            }
+        });
+        e.preventDefault();
+    });
 	$('body').on('click', '#button_update', function(){ 
 		$.ajax( {
 			url: '<?php echo $update; ?>',

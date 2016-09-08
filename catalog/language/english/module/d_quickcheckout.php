@@ -1,28 +1,15 @@
 <?php 
 
-$_['option_register_payment_address_title']  		= 'Payment details';
-$_['option_register_payment_address_description']  	= '';
-$_['option_register_shipping_address_title']  		= 'Delivery details';
-$_['option_register_shipping_address_description']  = '';
-$_['option_register_shipping_method_title']  		= 'Shipping method';
-$_['option_register_payment_method_title'] 			= 'Payment method';
-$_['option_register_cart_description'] 				= '';
-
-$_['option_guest_payment_address_title']  			= 'Payment details';
-$_['option_guest_payment_address_description']  	= '';
-$_['option_guest_shipping_address_title']  			= 'Delivery details';
-$_['option_guest_shipping_address_description'] 	= '';
-$_['option_guest_shipping_method_title']  			= 'Shipping method';
-$_['option_guest_payment_method_title'] 			= 'Payment method';
-$_['option_guest_cart_description'] 				= '';
-
-$_['option_logged_payment_address_title']  			= 'Payment address';
-$_['option_logged_payment_address_description']  	= '';
-$_['option_logged_shipping_address_title']  		= 'Delivery address';
-$_['option_logged_shipping_address_description'] 	= '';
-$_['option_logged_shipping_method_title']  			= 'Shipping method';
-$_['option_logged_payment_method_title'] 			= 'Payment method';
-$_['option_logged_cart_description'] 				= '';
+$_['title_payment_address']  						= 'Payment details';
+$_['description_payment_address']  					= '';
+$_['title_shipping_address']  						= 'Delivery details';
+$_['description_shipping_address'] 					= '';
+$_['title_shipping_method']  						= 'Shipping method';
+$_['description_shipping_method'] 					= '';
+$_['title_payment_method'] 							= 'Payment method';
+$_['description_payment_method'] 					= '';
+$_['title_shopping_cart'] 							= 'Shopping cart';
+$_['description_shopping_cart'] 					= '';
 
 $_['error_field_required'] 							= 'This field is required';
 
@@ -36,6 +23,5 @@ $_['error_step_payment_address_fields_company'] = 'Company name required more th
 $_['error_step_shipping_address_fields_company'] = 'Company name required more the 3 and less the 128 characters';
 
 $_['error_step_confirm_fields_comment'] = 'Please fill in the comment to the order';
-
 
 ?>

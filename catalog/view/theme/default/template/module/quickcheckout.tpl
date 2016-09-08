@@ -1,4 +1,4 @@
-<!-- Quick Checkout v4.3.1
+<!-- Quick Checkout v4.3.1 
 	by Dreamvention.com module/quickcheckout.tpl -->
 <style>
 <?php if($settings['general']['block_style'] == 'block') { ?>
@@ -92,7 +92,7 @@ $('.min-order').show(300, function(){
 	 $('.wait').hide();
 })
 $(document).ready(function(){
-<?php if($settings['general']['only_quickcheckout']){?>	
+<?php if($settings['general']['only_quickcheckout']){ ?>	
 		
 		$('body > div').hide()
 		$('#quickcheckout').prependTo("body")
@@ -341,10 +341,20 @@ $(document).on('click', '#qc_confirm_order', function(event) {
 	console.log('qc_confirm_order -> click') 
 	refreshCheckout(0, function(){
 		validateAllFields(function(){
-			confirmOrderQC(function(){
-				$('.processing-payment').show()
-				triggerPayment()	
-			})	
+                    refreshStepView(1, function(){
+				refreshStepView(2, function(){
+					refreshStepView(3, function(){
+                                           
+						confirmOrderQC(function(){
+								//refreshStepView(7, function(){
+								$('.processing-payment').show()
+								triggerPayment()	
+								//})
+						});
+					});
+				});	
+			});
+			
 		})
 	})
 	event.stopImmediatePropagation()
@@ -518,6 +528,7 @@ function validateCheckbox(fieldId, func){
 *	Confirm Order
 */
 function confirmOrderQC(func){
+    		
 	console.log('confirmOrderQC') 
 	$.ajax({
 		url: 'index.php?route=module/quickcheckout/confirm_order',
@@ -532,14 +543,8 @@ function confirmOrderQC(func){
 		},
 		success: function(html) {
 			console.log(html)
-			// bug with payment address rewriting shipping address 
-			refreshStepView(1, function(){
-				refreshStepView(2, function(){
-					refreshStepView(3, function(){
-						if (typeof func == "function") func();
-					});
-				});	
-			});	
+			if (typeof func == "function") func(); 
+		
 		},
 		error: function(xhr, ajaxOptions, thrownError) {
 			console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
@@ -562,7 +567,7 @@ $(document).on('focus', 'input[name=\'payment_address[password]\']', function() 
 });
 
 $(document).on('click', '#quickcheckout input[name="payment_address[shipping]"]', function(event) {			
-<?php if(!$settings['general']['uniform']){?>	
+<?php if(!$settings['general']['uniform']){ ?>	
 	if ($(this).is(':checked')) {
 		$(this).val(1) 
 	} else {
@@ -576,19 +581,44 @@ $(document).on('click', '#quickcheckout input[name="payment_address[shipping]"]'
 /*
 *	Change values of text or select(dropdown)
 */
-
+$('[name = "payment_address[address_id]"]').on("click", function(){
+    if($('[name = "payment_address[address_id]"]').val() != 0)
+       $('#payment_address_shipping').val(0);
+})
 $(document).on('focus', '#quickcheckout input[type=text], #quickcheckout input[type=password], #quickcheckout select, #quickcheckout textarea', function(event) {
-	var input_field = $(this);
-	 setTimeout(function () {
-        input_field.on('change', function(e) {
-			var dataRefresh = $(this).attr('data-refresh');
+
+        var input_field = $(this);
+        
+	 setTimeout(function (e) {
+              
+				input_field.on('change', function(e) {
+				confirmOrderVar = 0;
+				if ($('#qc_confirm_order').is(':hover')) confirmOrderVar = 1;  else confirmOrderVar = 0;
+			 var dataRefresh = $(this).attr('data-refresh');
 
 			validateField( $(this).attr('id') )
 			
 			if(dataRefresh){refreshCheckout(dataRefresh)}
-				
+                       
+								if (confirmOrderVar == 1) { 
+											console.log('qc_confirm_order -> click') 
+												refreshCheckout(0, function(){
+																validateAllFields(function(){
+																				refreshStepView(1, function(){
+																								refreshStepView(2, function(){
+																												refreshStepView(3, function(){
+																																confirmOrderQC(function(){
+																																				$('.processing-payment').show()
+																																				triggerPayment()	
+																																})	
+																												});
+																								});	
+																				});
+																})
+												})
+								}
 			e.stopImmediatePropagation()
-		});
+		});              
     }, 50)
 
 	event.stopImmediatePropagation()
@@ -600,12 +630,7 @@ $(document).on('click', '#quickcheckout .qc-quantity span', function(event){
     }else{
     	$(this).parent().children('input').val(parseInt($(this).parent().children('input').val())-1)		
     }
-    if($(this).parent().children('input').val() != 0){
-    	refreshCheckout(4)
-    }else{
-    	refreshAllSteps()
-    }
-	
+	refreshCheckout(1)
 	event.stopImmediatePropagation()
 })
 
@@ -720,6 +745,8 @@ $(document).on('click', '#quickcheckout  input[type=checkbox]', function(event) 
 	event.stopImmediatePropagation()
 });
 $(document).on('click', '#quickcheckout  input[type=radio]', function(event) {
+     if($('[name = "payment_address[address_id]"]').length && $('[name = "payment_address[address_id]"]').val() != 0)
+         $('#payment_address_shipping').val(0);
 	console.log(' #quickcheckout  input[type=radio]') 										
 	validateCheckbox( $(this).attr('id'))
 	refreshCheckout($(this).attr('data-refresh'))
@@ -779,17 +806,6 @@ function debug_update(){
 //Only quickcheckout
 
 
-// Stop bubbling up live functions
-$(document).on('focus', '#quickcheckout input, #quickcheckout select, #quickcheckout textarea', function(event) {
-	$(this).bind('change', function(e) {
-		e.stopImmediatePropagation()
-	})
-	event.stopImmediatePropagation()
-})
-// Stop bubbling up live functions
-$(document).on('click', '#quickcheckout input, #quickcheckout select, #quickcheckout textarea', function(event) {
-	event.stopImmediatePropagation()
-})
 
 
 $(document).on('click', '#quickcheckout .button-toggle', function(event){
